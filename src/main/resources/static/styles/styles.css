@@ -19,3 +19,9 @@ body {
     width: 100vw;
     height: 22vh;
 }
+
+#move-card {
+    position: absolute;
+    z-index: 999;
+    pointer-events: none;
+}

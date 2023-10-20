@@ -13,3 +13,37 @@ function cardCreate(selector, id, imgName, top, left) {
         border-radius: 20px;"
     src="images/${imgName}.png">`
 }
+
+function cardRemove(id) {
+    document.getElementById(id).remove()
+}
+
+function getRandomCardDeck() {
+    let suits = ["spades", "clubs", "hearts", "diamonds"]
+    let dignities = ["6", "7", "8", "9", "10", "j", "q", "k", "a"]
+    let cards = []
+    for (let suit of suits) {
+        for (let dignity of dignities) {
+            cards.push(suit + "/" + dignity)
+        }
+    }
+    let randomDeck = []
+    let size = 35
+    for (let i = 0; i < 36; i++) {
+        j = Math.round(Math.random() * size--)
+        randomDeck.push(cards[j])
+        cards.splice(j, 1)
+    }
+    return randomDeck
+}
+
+function linkCardToCursor() {
+    window.addEventListener('mousemove', e => {
+        const el = document.querySelector('#move-card');
+        const target = e.target;
+        if (!target) return;
+
+        el.style.left = e.pageX - width/2 + 'px'
+        el.style.top = e.pageY - height/2 + 'px';
+    })
+}
