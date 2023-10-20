@@ -1,0 +1,21 @@
+body {
+    background-image: url("../images/table.jpg");
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+}
+
+#top {
+    width: 100vw;
+    height: 22vh;
+}
+
+#center {
+    width: 100vw;
+    height: 56vh;
+}
+
+#bottom {
+    width: 100vw;
+    height: 22vh;
+}
