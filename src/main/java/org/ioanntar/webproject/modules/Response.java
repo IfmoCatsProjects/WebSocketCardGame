@@ -1,12 +1,12 @@
 package org.ioanntar.webproject.modules;
 
-public class Greeting {
+public class Response {
     private String content;
 
-    public Greeting() {
+    public Response() {
     }
 
-    public Greeting(String content) {
+    public Response(String content) {
         this.content = content;
     }
 

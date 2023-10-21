@@ -4,29 +4,28 @@ const stompClient = new StompJs.Client({
 
 stompClient.onConnect = (frame) => {
     console.log('Connected: ' + frame);
-    stompClient.subscribe('/room/game', (greeting) => {
-        showGreeting(JSON.parse(greeting.body).content);
-    });
 };
 
-stompClient.onWebSocketError = (error) => {
-    console.error('Error with websocket', error);
-};
+// stompClient.onWebSocketError = (error) => {
+//     console.error('Error with websocket', error);
+// };
+//
+// stompClient.onStompError = (frame) => {
+//     console.error('Broker reported error: ' + frame.headers['message']);
+//     console.error('Additional details: ' + frame.body);
+// };
 
-stompClient.onStompError = (frame) => {
-    console.error('Broker reported error: ' + frame.headers['message']);
-    console.error('Additional details: ' + frame.body);
-};
-
-function sendName(card) {
-    stompClient.publish({
-        destination: "/app/game",
-        body: JSON.stringify({'name': card})
-    });
+async function send(object, destination, callback) {
+    stompClient.onConnect = (frame) => {
+        console.log(frame)
+        stompClient.publish({
+            destination: "/app/" + destination,
+            body: JSON.stringify(object)
+        });
+        stompClient.subscribe('/room/game', (greeting) => {
+            callback(JSON.parse(greeting.body).content);
+        });
+    }
 }
 
-function showGreeting(message) {
-   console.log(message)
-}
-
-stompClient.activate()
+stompClient.activate();
