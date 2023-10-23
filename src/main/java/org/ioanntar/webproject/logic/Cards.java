@@ -40,6 +40,9 @@ public class Cards {
         deck.remove(key);
     }
 
+    public String get(String key) {
+        return deck.get(key);
+    }
     public void clear() {
         deck.clear();
     }

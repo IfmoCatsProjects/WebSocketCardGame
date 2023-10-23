@@ -8,19 +8,22 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class GameController {
 
-    @MessageMapping("/action")
-    @SendTo("/room/game")
-    public Response greeting(Request data) {
-        return new Response("Hello, " + data.getData());
-    }
-
     @MessageMapping("/start")
     @SendTo("/room/game")
     public Response generate() {
         Cards cards = Cards.getCards();
         cards.generateRandomDeck();
-        Response response = new Response(cards.getDeck().get("card0"));
+        Response response = new Response(cards.get("card0"));
         cards.remove("card0");
+        return response;
+    }
+
+    @MessageMapping("/click")
+    @SendTo("/room/game")
+    public Response action(Request data) {
+        Cards card = Cards.getCards();
+        Response response = new Response(card.get(data.getData()));
+        card.remove(data.getData());
         return response;
     }
 }

@@ -9,9 +9,6 @@ function distribution() {
         offset = offset + 1.57;
     }
 //cardCreate("#bottom", "common", "shirt", "", "46%")
-    send({}, "start", (message) => {
-        createCard("#center", "common", message, "41%", "81%")
-    })
 
     let graphics = []
     graphics.push(createCard("#bottom", "your-card", "shirt", 0, "46%"))
@@ -19,4 +16,10 @@ function distribution() {
     graphics.push(createCard("#center", "player2-card", "shirt", "41%", "0.5%"))
     graphics.forEach((e) => e.style.display = "none")
 }
+
+document.getElementById("start").addEventListener("click", () => {
+    send({}, "start", true, (message) => {
+        createCard("#center", "common", message, "41%", "81%")
+    })
+})
 distribution()

@@ -1,31 +1,29 @@
+let callbacks = 0
 const stompClient = new StompJs.Client({
     brokerURL: 'ws://localhost:8080/gs-guide-websocket'
 });
 
 stompClient.onConnect = (frame) => {
     console.log('Connected: ' + frame);
+    document.getElementById("start").disabled = false
 };
 
-// stompClient.onWebSocketError = (error) => {
-//     console.error('Error with websocket', error);
-// };
-//
-// stompClient.onStompError = (frame) => {
-//     console.error('Broker reported error: ' + frame.headers['message']);
-//     console.error('Additional details: ' + frame.body);
-// };
-
-async function send(object, destination, callback) {
-    stompClient.onConnect = (frame) => {
-        console.log(frame)
+function send(object, destination, disposable, callback ) {
+    if (stompClient.connected) {
         stompClient.publish({
             destination: "/app/" + destination,
             body: JSON.stringify(object)
         });
-        stompClient.subscribe('/room/game', (greeting) => {
-            callback(JSON.parse(greeting.body).content);
+        stompClient.subscribe("/room/game", (message) => {
+            callback(JSON.parse(message.body).content)
+            callbacks++;
+            if (disposable) {
+                stompClient.unsubscribe(`sub-${callbacks - 1}`);
+            }
         });
     }
 }
-
+function unsubscribeLast() {
+    stompClient.unsubscribe(`sub-${callbacks - 1}`);
+}
 stompClient.activate();

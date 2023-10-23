@@ -15,15 +15,18 @@ function cardFromDeckEvent(i) {
         }
     })
 
-    // el.addEventListener('click', (e) => {
-    //     clicked = true
-    //     document.getElementById("move-card").style.left = String(e.pageX) - width / 2 + "px"
-    //     document.getElementById("move-card").style.top = String(e.pageY) - height / 2 + "px"
-    //     createCard("#move-card", cards[i], cards[i], 0, 0)
-    //     linkCardToCursor()
-    //     removeCard("card" + i)
-    //     send({"name": "card" + i}, "action")
-    // })
+    el.addEventListener('click', (e) => {
+        if (!clicked) {
+            clicked = true
+            document.getElementById("move-card").style.left = String(e.pageX) - width / 2 + "px"
+            document.getElementById("move-card").style.top = String(e.pageY) - height / 2 + "px"
+            removeCard("card" + i)
+            send({"data": "card" + i}, "click", true, (card) => {
+                createCard("#move-card", card, card, 0, 0)
+            })
+            linkCardToCursor()
+        }
+    })
 }
 
 function action(players) {

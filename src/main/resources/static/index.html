@@ -7,7 +7,9 @@
 </head>
 <body>
 
-    <div id="top"></div>
+    <div id="top">
+       <button id="start" disabled>Start</button> <!-- Временная кнопка старта-->
+    </div>
     <div id="center">
         <div id="move-card"></div>
     </div>
@@ -16,8 +18,8 @@
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
-<script src="js/connection.js"></script>
 <script src="js/cardManager.js"></script>
+<script src="js/connection.js"></script>
 <script src="js/events.js"></script>
 <script src="js/distribution.js"></script>
 </html>
