@@ -3,7 +3,7 @@ let height = width * 1.5;
 function createCard(selector, id, imgName, top, left) {
     const img = document.createElement("img")
     img.id = id
-    img.style = `style="
+    img.style = `
         width: ${width}px;
         height: ${height}px;
         position: absolute;
@@ -29,13 +29,4 @@ function linkCardToCursor() {
         el.style.left = e.pageX - width/2 + 'px'
         el.style.top = e.pageY - height/2 + 'px';
     })
-}
-
-function action(players) {
-    for (let player of players) {
-        if (clicked) {
-            player.style.border = "2px solid lime"
-            player.style.borderRadius = "20 px"
-        }
-    }
 }

@@ -13,8 +13,8 @@ public class GameController {
     public Response generate() {
         Cards cards = Cards.getCards();
         cards.generateRandomDeck();
-        Response response = new Response(cards.get("card0"));
-        cards.remove("card0");
+        Response response = new Response(cards.get("card35"));
+        cards.remove("card35");
         return response;
     }
 

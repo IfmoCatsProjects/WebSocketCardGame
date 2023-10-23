@@ -7,21 +7,29 @@ body {
 
 #top {
     width: 100vw;
-    height: 22vh;
+    height: 23vh;
+    position: relative;
 }
 
 #center {
     width: 100vw;
-    height: 56vh;
+    height: 54vh;
+    position: relative;
 }
 
 #bottom {
     width: 100vw;
-    height: 22vh;
+    height: 23vh;
+    position: relative;
 }
 
 #move-card {
     position: absolute;
     z-index: 999;
     pointer-events: none;
+    transform: translateY(-50%) translateX(-50%)
+}
+
+img.hidden {
+    visibility: hidden;
 }
