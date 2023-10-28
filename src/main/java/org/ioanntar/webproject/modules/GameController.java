@@ -15,20 +15,35 @@ public class GameController {
     private SortedMap<Long, LinkedHashMap<String, LinkedList<String>>> games = new TreeMap<>();
     private SortedMap<Long, Integer> current = new TreeMap<>();
 
+    @MessageMapping("/connect")
+    @SendTo("/room/game")
+    public Response connect(SimpMessageHeaderAccessor headerAccessor) {
+        long id = new IdGenerator(current.keySet()).generate();
+        headerAccessor.getSessionAttributes().put("gameId", id);
+        LinkedHashMap<String, LinkedList<String>> decks = new LinkedHashMap<>();
+        //временный код
+        decks.put(headerAccessor.getSessionId(), new LinkedList<>());
+        decks.put("b", new LinkedList<>());
+        decks.put("c", new LinkedList<>());
+        decks.put("common", new LinkedList<>());
+
+        games.put(id, decks);
+//        games.computeIfAbsent(id, k -> new LinkedHashMap<>());
+//        games.get(id).put(headerAccessor.getSessionId(), new LinkedList<>());
+        return new Response();
+    }
+
     @MessageMapping("/start")
     @SendTo("/room/game")
-    public Response start(Request players, SimpMessageHeaderAccessor headerAccessor) {
-        long id = new IdGenerator(current.keySet()).generate();
-        current.put(id, (int) (Math.random() * players.getNumber()));
-        LinkedHashMap<String, LinkedList<String>> decks = new LinkedHashMap<>();
-        headerAccessor.getSessionAttributes().put("gameId", id);
+    public Response start(SimpMessageHeaderAccessor headerAccessor) {
+        long id = (long) headerAccessor.getSessionAttributes().get("gameId");
+        LinkedHashMap<String, LinkedList<String>> decks = games.get(id);
+        current.put(id, (int) (Math.random() * (games.get(id).size() - 2)));
         System.out.println(current.get(id));
+
         Cards cards = new Cards();
         decks.put("deck", cards.getDeck());
-        for (int i = 0; i <= players.getNumber(); i++) {
-            decks.put("" + i, new LinkedList<>());
-        }
-        decks.get("3").add(cards.get(35));
+        decks.get("common").add(cards.get(35));
         games.put(id, decks);
 
         Response response = new Response(cards.get(35));
@@ -49,14 +64,13 @@ public class GameController {
     @SendTo("/room/game")
     public Response put(Request data, SimpMessageHeaderAccessor headerAccessor) {
         long id = (long) headerAccessor.getSessionAttributes().get("gameId");
-        int size = games.get(id).size() - 2;
+        int size = games.get(id).size() - 1;
         int currentPlayer = current.get(id);
-        LinkedList<String> playerDeck = games.get(id).get(String.valueOf((data.getNumber() + currentPlayer) % size));
-        playerDeck.add(data.getData());
+        String[] players = games.get(id).keySet().toArray(new String[size]);
+        games.get(id).get(players[data.getNumber()]).add(data.getData()); //TODO изменить на (currentPlayer + data.getNumber()) % size
 
-        if (data.getNumber() == currentPlayer) {
-            current.replace(id, (currentPlayer + 1) % size);
-            System.out.println((currentPlayer + 1) % size + " " + size);
+        if (data.getNumber() == currentPlayer) { //TODO поменять правое выражение на 0, когда буду интегрировать несколько игроков
+            current.replace(id, (currentPlayer + 1) % (size - 1));
         }
         System.out.println(current.get(id) + "\n" + games.get(id));
         return new Response();

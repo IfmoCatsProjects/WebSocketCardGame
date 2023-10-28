@@ -44,7 +44,6 @@ function put() {
     for (let frame of document.querySelectorAll(".frame")) {
         frame.addEventListener('click', () => {
             let player = frame.className.split(" ")[1]
-            console.log(player)
             if (clicked) {
                 let card = document.getElementById("move-card").firstElementChild
                 send({"number": player, "data": card.id}, "put", true, () => {

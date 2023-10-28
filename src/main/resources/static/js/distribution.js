@@ -42,8 +42,10 @@ function createFrames(players) {
 }
 
 document.getElementById("start").addEventListener("click", () => {
-    send({"number": 3}, "start", true, (message) => {
-        createCard("#center", "3", message, "16vh", "81vw")
-        distribution()
+    send({}, "connect", true, () => {
+        send({}, "start", true, (message) => {
+            createCard("#center", "3", message, "16vh", "81vw")
+            distribution()
+        })
     })
 })
