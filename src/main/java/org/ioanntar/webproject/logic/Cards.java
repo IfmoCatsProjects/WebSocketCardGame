@@ -3,19 +3,14 @@ package org.ioanntar.webproject.logic;
 import java.util.*;
 
 public class Cards {
-    private LinkedHashMap<String, String> deck = new LinkedHashMap<>();
-    private static Cards cards;
 
-    public static Cards getCards() {
-        if (cards == null) {
-            cards = new Cards();
-        }
-        return cards;
+    private LinkedList<String> deck = new LinkedList<>();
+
+    public Cards() {
+        generateRandomDeck();
     }
 
-    private Cards() {}
-
-    public void generateRandomDeck() {
+    private void generateRandomDeck() {
         String[] suits = {"spades", "clubs", "hearts", "diamonds"};
         String[] dignities = {"6", "7", "8", "9", "10", "j", "q", "k", "a"};
         List<String> cards = new LinkedList<>();
@@ -27,20 +22,20 @@ public class Cards {
         int size = 35;
         for (int i = 0; i < 36; i++) {
             int j = (int) Math.round(Math.random() * size--);
-            deck.put("card" + i, cards.get(j));
+            deck.add(cards.get(j));
             cards.remove(j);
         }
     }
 
-    public LinkedHashMap<String, String> getDeck() {
+    public LinkedList<String> getDeck() {
         return deck;
     }
 
-    public void remove(String key) {
-        deck.remove(key);
+    public void remove(int index) {
+        deck.set(index, null);
     }
 
-    public String get(String key) {
+    public String get(int key) {
         return deck.get(key);
     }
     public void clear() {

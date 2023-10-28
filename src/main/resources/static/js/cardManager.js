@@ -20,13 +20,25 @@ function removeCard(id) {
     document.getElementById(id).remove()
 }
 
-function linkCardToCursor() {
-    window.addEventListener('mousemove', e => {
-        const el = document.querySelector('#move-card');
-        const target = e.target;
-        if (!target) return;
+function addCardToDeck(id, imgName) {
+    let card = document.getElementById(id)
+    card.style.display = ""
+    card.src = `images/${imgName}.png`
+    return card
+}
 
-        el.style.left = e.pageX - width/2 + 'px'
-        el.style.top = e.pageY - height/2 + 'px';
-    })
+function cardMouseMove(e) {
+    const el = document.querySelector('#move-card');
+    const target = e.target;
+    if (!target) return;
+
+    el.style.left = e.pageX - width/2 + 'px'
+    el.style.top = e.pageY - height/2 + 'px';
+}
+function addCardToCursor() {
+    window.addEventListener('mousemove', e => cardMouseMove(e))
+}
+
+function removeCardFromCursor() {
+    window.removeEventListener('mousemove', e => cardMouseMove(e))
 }
