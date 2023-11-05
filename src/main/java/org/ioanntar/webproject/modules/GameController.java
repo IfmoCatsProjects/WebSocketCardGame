@@ -1,10 +1,13 @@
 package org.ioanntar.webproject.modules;
 
 import org.ioanntar.webproject.logic.Cards;
-import org.ioanntar.webproject.logic.IdGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
 import java.util.*;
@@ -12,57 +15,54 @@ import java.util.*;
 @Controller
 public class GameController {
 
-    private SortedMap<Long, LinkedHashMap<String, LinkedList<String>>> games = new TreeMap<>();
-    private SortedMap<Long, Integer> current = new TreeMap<>();
+    @Autowired
+    private SimpMessagingTemplate template;
+
+    private static SortedMap<Long, LinkedHashMap<String, LinkedList<String>>> games = new TreeMap<>();
+    private static SortedMap<Long, Integer> current = new TreeMap<>();
+    private static long id = 1;
 
     @MessageMapping("/connect")
-    @SendTo("/room/game")
-    public Response connect(SimpMessageHeaderAccessor headerAccessor) {
-        long id = new IdGenerator(current.keySet()).generate();
-        headerAccessor.getSessionAttributes().put("gameId", id);
+    public void connect(SimpMessageHeaderAccessor sha) {
+        sha.getSessionAttributes().put("gameId", id);
         LinkedHashMap<String, LinkedList<String>> decks = new LinkedHashMap<>();
         //временный код
-        decks.put(headerAccessor.getSessionId(), new LinkedList<>());
+        decks.put(sha.getUser().getName(), new LinkedList<>());
         decks.put("b", new LinkedList<>());
         decks.put("c", new LinkedList<>());
         decks.put("common", new LinkedList<>());
 
-        games.put(id, decks);
-//        games.computeIfAbsent(id, k -> new LinkedHashMap<>());
-//        games.get(id).put(headerAccessor.getSessionId(), new LinkedList<>());
-        return new Response();
+        games.put(id++, decks);
+        template.convertAndSendToUser(sha.getUser().getName(), "/game", "ready");
     }
 
     @MessageMapping("/start")
-    @SendTo("/room/game")
-    public Response start(SimpMessageHeaderAccessor headerAccessor) {
+    public void start(SimpMessageHeaderAccessor headerAccessor) {
         long id = (long) headerAccessor.getSessionAttributes().get("gameId");
         LinkedHashMap<String, LinkedList<String>> decks = games.get(id);
         current.put(id, (int) (Math.random() * (games.get(id).size() - 2)));
-        System.out.println(current.get(id));
 
         Cards cards = new Cards();
         decks.put("deck", cards.getDeck());
         decks.get("common").add(cards.get(35));
         games.put(id, decks);
 
-        Response response = new Response(cards.get(35));
+        Response response = new Response(games.get(id).keySet());
+        response.sendToPlayers(template, cards.get(35));
         cards.remove(35);
-        return response;
     }
 
     @MessageMapping("/click")
-    @SendTo("/room/game")
-    public Response click(Request data, SimpMessageHeaderAccessor headerAccessor) {
-        LinkedList<String> cards = games.get(headerAccessor.getSessionAttributes().get("gameId")).get("deck");
-        Response response = new Response(cards.get(data.getNumber()));
+    public void click(Request data, SimpMessageHeaderAccessor headerAccessor) {
+        long id = (long) headerAccessor.getSessionAttributes().get("gameId");
+        LinkedList<String> cards = games.get(id).get("deck");
+        Response response = new Response(games.get(id).keySet());
+        response.sendToPlayers(template, cards.get(data.getNumber()));
         cards.set(data.getNumber(), null);
-        return response;
     }
 
     @MessageMapping("/put")
-    @SendTo("/room/game")
-    public Response put(Request data, SimpMessageHeaderAccessor headerAccessor) {
+    public void put(Request data, SimpMessageHeaderAccessor headerAccessor) {
         long id = (long) headerAccessor.getSessionAttributes().get("gameId");
         int size = games.get(id).size() - 1;
         int currentPlayer = current.get(id);
@@ -72,7 +72,19 @@ public class GameController {
         if (data.getNumber() == currentPlayer) { //TODO поменять правое выражение на 0, когда буду интегрировать несколько игроков
             current.replace(id, (currentPlayer + 1) % (size - 1));
         }
-        System.out.println(current.get(id) + "\n" + games.get(id));
-        return new Response();
+        new Response(games.get(id).keySet()).sendToPlayers(template, "");
+        System.out.println(games.get(id) + "\n");
     }
+
+    @MessageMapping("/take")
+    public void take(SimpMessageHeaderAccessor headerAccessor) {
+        long id = (long) headerAccessor.getSessionAttributes().get("gameId");
+        LinkedList<String> deck = games.get(id).get(headerAccessor.getUser().getName());
+        String card = deck.getLast();
+        deck.removeLast();
+        String subCard = deck.size() != 0 ? deck.getLast() : "none";
+        new Response(games.get(id).keySet()).sendToPlayers(template, card + " " + subCard);
+        System.out.println(games.get(id) + "\n");
+    }
+
 }

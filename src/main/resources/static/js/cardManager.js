@@ -35,7 +35,9 @@ function cardMouseMove(e) {
     el.style.left = e.pageX - width/2 + 'px'
     el.style.top = e.pageY - height/2 + 'px';
 }
-function addCardToCursor() {
+function addCardToCursor(takenCard) {
+    let clickedCard = createCard("#move-card", takenCard, takenCard, 0, 0)
+    clickedCard.style.pointerEvents = "none"
     window.addEventListener('mousemove', e => cardMouseMove(e))
 }
 

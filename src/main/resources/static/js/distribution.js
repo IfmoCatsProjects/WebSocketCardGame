@@ -15,6 +15,7 @@ function distribution() {
     }
     createFrames(smallDecks)
     put(smallDecks.length)
+    take()
 }
 
 function createFrames(players) {
@@ -42,7 +43,8 @@ function createFrames(players) {
 }
 
 document.getElementById("start").addEventListener("click", () => {
-    send({}, "connect", true, () => {
+    send({}, "connect", true, (msg) => {
+        console.log(msg)
         send({}, "start", true, (message) => {
             createCard("#center", "3", message, "16vh", "81vw")
             distribution()

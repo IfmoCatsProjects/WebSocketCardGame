@@ -23,9 +23,7 @@ function cardFromDeckEvent(players, i) {
             document.getElementById("move-card").style.top = String(e.pageY)  + "px"
             removeCard("card" + i)
             send({"number": i}, "click", true, (card) => {
-                let clicked = createCard("#move-card", card, card, 0, 0)
-                clicked.style.pointerEvents = "none"
-                addCardToCursor()
+                addCardToCursor(card)
                 framesOn()
             })
         }
@@ -56,4 +54,23 @@ function put() {
             }
         })
     }
+}
+function take() {
+    document.getElementById("0").addEventListener('click', () => {
+        if(!clicked) {
+            send({}, "take", true, (msg) => {
+                clicked = true
+                let takenCard = msg.split(" ")[0]
+                let subCard = msg.split(" ")[1]
+                addCardToCursor(takenCard)
+                framesOn()
+                console.log(msg)
+                if(subCard === "none") {
+                    document.getElementById("0").style.display = "none"
+                } else {
+                    document.getElementById("0").src = `images/${subCard}.png`
+                }
+            })
+        }
+    })
 }
