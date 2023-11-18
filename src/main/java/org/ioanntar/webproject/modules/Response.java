@@ -1,17 +1,20 @@
 package org.ioanntar.webproject.modules;
 
+import org.ioanntar.webproject.database.entities.Game;
+import org.ioanntar.webproject.database.entities.Player;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Response {
+
     private Set<String> players;
 
-    public Response() {
-    }
+    public Response() {}
 
-    public Response(Set<String> players) {
-        this.players = players;
+    public Response(Game game) {
+        players = game.getPlayers().stream().map(Player::getPrincipal).collect(Collectors.toSet());
     }
 
     public void sendToPlayers(SimpMessagingTemplate template, String response) {
