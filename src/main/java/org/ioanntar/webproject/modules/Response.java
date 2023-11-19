@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class Response {
 
-    private Set<String> players;
+    private Set<String> players; 
 
     public Response() {}
 
