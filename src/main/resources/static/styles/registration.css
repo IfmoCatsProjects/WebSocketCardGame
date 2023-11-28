@@ -1,0 +1,41 @@
+body {
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    display: flex;
+}
+
+.form-input {
+    position: relative;
+    margin-bottom: 40px;
+    border: none;
+    border-bottom: 1px solid red;
+    font-size: 18px;
+    height: 30px;
+    outline: none;
+}
+
+.form-input:focus {
+    border-color: blue;
+}
+
+form {
+    text-align: center;
+    height: 300px;
+    width: 300px;
+    border-radius: 20px;
+    box-shadow: 0 4px 16px black;
+}
+
+#submit {
+    border-radius: 20px;
+    height: 40px;
+    width: 100px;
+    position: relative;
+    border: none;
+    background-color: lime;
+    font-weight: bold;
+    font-size: 18px;
+}

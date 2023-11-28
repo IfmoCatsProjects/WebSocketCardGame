@@ -1,5 +1,5 @@
 body {
-    background-image: url("../images/table.jpg");
+    background: url("../images/table.jpg") no-repeat fixed;
     background-size: cover;
     margin: 0;
     padding: 0;
