@@ -6,14 +6,32 @@
     <link rel="stylesheet" href="../styles/registration.css">
 </head>
 <body>
-    <form>
-        <h1>Вход</h1>
-        <div id="inputs">
-            <input type="email" class="form-input" placeholder="Почта">
-            <br>
-            <input type="password" class="form-input" placeholder="Пароль">
-        </div>
-        <input type="submit" id="submit" value="Войти">
-    </form>
+    <div id="background"></div>
+    <div id="lines">
+        <div class="line up static"></div>
+        <div class="line bottom static"></div>
+        <div class="line up move"></div>
+        <div class="line bottom move"></div>
+    </div>
+    <div id="decorations">
+        <img src="../images/clubs/k.png" class="card minus-30" id="card1">
+        <img src="../images/diamonds/a.png" class="card plus-30" id="card2">
+        <img src="../images/shirt.png" class="card minus-30" id="card3" alt="">
+        <img src="../images/hearts/10.png" class="card plus-30" id="card4">
+
+        <img src="../images/pig.png" id="pig">
+    </div>
+    <div id="form">
+        <form>
+            <h1>Вход</h1>
+            <div id="inputs">
+                <input type="email" class="form-input" placeholder="Почта">
+                <br>
+                <input type="password" class="form-input" placeholder="Пароль">
+            </div>
+            <input type="submit" id="submit" value="Войти">
+        </form>
+    </div>
 </body>
+<script src="../js/start/start.js"></script>
 </html>

@@ -1,12 +1,14 @@
 body {
     margin: 0;
     padding: 0;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    display: flex;
 }
 
+#background {
+    background-image: linear-gradient(to top, black 0%, yellow 0%);
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+}
 .form-input {
     position: relative;
     margin-bottom: 40px;
@@ -21,12 +23,19 @@ body {
     border-color: blue;
 }
 
-form {
+#form {
     text-align: center;
     height: 300px;
     width: 300px;
     border-radius: 20px;
+    background-color: white;
     box-shadow: 0 4px 16px black;
+    padding-top: 9px;
+
+    transform: translateY(-50%) translateX(-50%);
+    position: absolute;
+    top: 50vh;
+    left: 50vw;
 }
 
 #submit {
@@ -38,4 +47,74 @@ form {
     background-color: lime;
     font-weight: bold;
     font-size: 18px;
+}
+
+.line {
+    position: absolute;
+    height: 8vh;
+}
+
+.up {
+    top: 7vh;
+}
+
+.bottom {
+    bottom: 7vh;
+}
+
+.static {
+    width: 100vw;
+    background-color: red;
+}
+
+.move {
+
+}
+
+#decorations {
+    position: relative;
+}
+.card {
+    position: absolute;
+    width: 140px;
+    height: 210px;
+    transform: translateY(-50%) translateX(-50%);
+    border: 1px solid black;
+    border-radius: 20px;
+}
+
+#card1 {
+    top: 40vh;
+    left: 20vw;
+}
+
+#card2 {
+    top: 50vh;
+    left: 20vw;
+}
+
+#card3 {
+    top: 40vh;
+    left: 80vw;
+}
+
+#card4 {
+    top: 50vh;
+    left: 80vw;
+}
+
+.minus-30 {
+    rotate: -30deg;
+}
+
+.plus-30 {
+    rotate: 30deg;
+}
+
+#pig {
+    position: absolute;
+    height: 180px;
+    width: 330px;
+    top: 8vh;
+    left: 40vw;
 }

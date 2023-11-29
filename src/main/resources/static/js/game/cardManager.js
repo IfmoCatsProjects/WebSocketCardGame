@@ -11,7 +11,7 @@ function createCard(selector, id, imgName, top, left) {
         left: ${left};
         border: 1px solid black;
         border-radius: 20px;"`
-    img.src = `images/${imgName}.png`
+    img.src = `../../images/${imgName}.png`
     document.querySelector(selector).appendChild(img)
     return document.getElementById(id)
 }
@@ -23,7 +23,7 @@ function removeCard(id) {
 function addCardToDeck(id, imgName) {
     let card = document.getElementById(id)
     card.style.display = ""
-    card.src = `images/${imgName}.png`
+    card.src = `../../images/${imgName}.png`
     return card
 }
 

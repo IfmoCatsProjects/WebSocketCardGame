@@ -8,7 +8,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MainController {
 
     @GetMapping("/game")
-    public String index(Model model) {
+    public String game(Model model) {
         return "redirect:/templates/game.html";
+    }
+
+    @GetMapping("/")
+    public String start(Model model) {
+        return "redirect:/templates/index.html";
     }
 }
