@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pig</title>
+    <link rel="stylesheet" th:href="@{/styles/start.css}">
+</head>
+<body>
+    <div id="background"></div>
+    <div id="lines">
+        <div class="line up static"></div>
+        <div class="line bottom static"></div>
+        <div class="line up move"></div>
+        <div class="line bottom move"></div>
+    </div>
+    <div id="decorations">
+        <img th:src="@{/images/clubs/k.png}" class="card minus-30" id="card1">
+        <img th:src="@{/images/diamonds/a.png}" class="card plus-30" id="card2">
+        <img th:src="@{/images/shirt.png}" class="card minus-30" id="card3" alt="">
+        <img th:src="@{/images/hearts/10.png}" class="card plus-30" id="card4">
+
+        <img th:src="@{/images/pig.png}" id="pig" onclick="document.getElementById('pigAudio').play()" title="Нажми на меня">
+    </div>
+    <div class="form enter-block">
+        <form>
+            <h1>Вход</h1>
+            <div id="inputs">
+                <input type="email" class="form-input" placeholder="Почта">
+                <input type="password" class="form-input" placeholder="Пароль" maxlength="32">
+            </div>
+            <input type="submit" class="submit enter" value="Войти">
+        </form>
+        <br>
+        <a th:href="@{/reg}">Зарегистрироваться</a>
+    </div>s
+
+    <audio id="pigAudio">
+        <source th:src="@{/audio/pig_sound.mp3}">
+    </audio>
+</body>
+<script th:src="@{/js/start/start.js}"></script>
+<script th:src="@{/js/start/pigsound.js}"></script>
+</html>

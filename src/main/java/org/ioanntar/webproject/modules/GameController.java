@@ -9,9 +9,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class GameController {
