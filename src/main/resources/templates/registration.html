@@ -20,14 +20,16 @@
   <img th:src="@{/images/shirt.png}" class="card plus-30" id="card4">
 </div>
 <div class="form registration-block">
-  <form action="/reg">
+  <form action="/registration" method="post">
     <h1>Регистрация</h1>
     <div id="inputs">
-      <input type="email" class="form-input" placeholder="Почта" name="email">
-      <input type="text" class="form-input" placeholder="Имя" name="name" maxlength="16">
-      <input type="text" class="form-input" placeholder="Вес" name="weight" maxlength="3">
-      <input type="password" class="form-input" placeholder="Пароль" name="password" maxlength="32">
-      <input type="password" class="form-input" placeholder="Повторите пароль" maxlength="32">
+      <h5 id="error-email" th:text="${emailError}" />
+      <input type="email" class="form-input" placeholder="Почта" name="email" required>
+      <input type="text" class="form-input" placeholder="Имя" name="name" maxlength="16" required th:value="${name}">
+      <input type="number" class="form-input number" placeholder="Вес" name="weight" min="15" max="999" required th:value="${weight}">
+      <input id="pass" type="password" class="form-input" placeholder="Пароль" name="password"minlength="6" maxlength="32" required th:value="${password}">
+      <h5 id="error-passwords"></h5>
+      <input id="repass" type="password" class="form-input" placeholder="Повторите пароль" minlength="6" maxlength="32" required th:value="${password}">
     </div>
     <input type="submit" class="submit reg" value="Зарегистрироваться">
   </form>

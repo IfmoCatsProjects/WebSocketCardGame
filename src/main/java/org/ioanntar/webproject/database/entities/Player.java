@@ -23,7 +23,16 @@ public class Player {
     private String principal;
 
     @Column(name = "position")
-    private int position;
+    private Integer position;
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "weight")
+    private short weight;
 
     @ManyToOne()
     @JoinColumn(name = "game_id")
@@ -34,7 +43,10 @@ public class Player {
 
     public Player() {}
 
-    public Player(String name) {
+    public Player(String name, String email, String password, short weight) {
         this.name = name;
+        this.email = email;
+        this.password = password;
+        this.weight = weight;
     }
 }

@@ -19,6 +19,10 @@ body {
     outline: none;
 }
 
+.number {
+    width: 73.1%;
+}
+
 .form-input:focus {
     border-color: blue;
 }
@@ -135,4 +139,24 @@ body {
     width: 330px;
     top: 8vh;
     left: 40vw;
+}
+
+h5 {
+    position: absolute;
+    color: red;
+}
+
+#error-email {
+    top: 5vh;
+    left: 3vw;
+}
+
+#error-passwords {
+    top: 39.5vh;
+    left: 5vw;
+}
+
+#error-enter {
+    top: 23vh;
+    left: 4vw;
 }

@@ -32,8 +32,25 @@ function changeLines() {
     }, 3999)
 }
 
+function passwordEqual() {
+    document.querySelector(".submit").addEventListener("click", (e) => {
+        if (document.getElementById("pass").value !== document.getElementById("repass").value) {
+            document.getElementById("error-passwords").innerText = "Пароли не совпадают!"
+            e.preventDefault()
+        }
+    })
+}
+
 changeLines()
 changeBackground()
 
 setInterval(changeBackground, 7000)
 setInterval(changeLines, 7000)
+
+passwordEqual()
+
+document.body.addEventListener("click", (e) => {
+    if (!e.target.classList.contains("submit")) {
+        document.querySelectorAll("h5").forEach(e => e.innerText = "")
+    }
+})

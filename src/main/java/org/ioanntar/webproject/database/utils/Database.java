@@ -1,8 +1,11 @@
 package org.ioanntar.webproject.database.utils;
 
-import jakarta.persistence.Query;
+import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.criteria.JpaCriteriaQuery;
+
+import java.util.List;
 
 public class Database {
 
@@ -22,9 +25,10 @@ public class Database {
         return session.merge(entity);
     }
 
-    public void clear(Class<?> entityClass) {
-        Query query = session.createQuery(String.format("delete from %s", entityClass.getName()));
-        query.executeUpdate();
+    public <T> List<T> getAll(Class<T> entityClass) {
+        var criteriaQuery = session.getCriteriaBuilder().createQuery(entityClass);
+        Root<T> root = criteriaQuery.from(entityClass);
+        return session.createQuery(criteriaQuery.select(root)).getResultList();
     }
 
     public void commit() {
