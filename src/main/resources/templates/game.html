@@ -6,19 +6,13 @@
     <link rel="stylesheet" th:href="@{/styles/game.css}">
 </head>
 <body>
-
-    <div id="top">
-        <button id="start" disabled>Start</button> <!-- Временная кнопка старта-->
+    <div id="root">
+        <button id="start" disabled>Start</button>
     </div>
-    <div id="center">
-    </div>
-    <div id="bottom"></div>
-    <div id="move-card"></div>
-
 </body>
 <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
-<script th:src="@{/js/game/cardManager.js}"></script>
+<script th:src="@{/js/dist/cardManager.js}"></script>
 <script th:src="@{js/game/connection.js}"></script>
-<script th:src="@{js/game/events.js}"></script>
-<script th:src="@{/js/game/distribution.js}"></script>
+<script th:src="@{js/dist/events.js}"></script>
+<script th:src="@{/js/dist/distribution.js}"></script>
 </html>

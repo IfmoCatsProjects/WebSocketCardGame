@@ -1,32 +1,27 @@
-let clicked = false
-function cardFromDeckEvent(players, i) {
-    let el = document.getElementById("card" + i);
-    el.addEventListener('mouseenter', () => {
-        if (!clicked) {
-            el.style.border = "2px solid blue"
-            el.style.top = "15vh"
-            el.style.cursor = "pointer"
-        }
-    })
-    el.addEventListener('mouseleave', () => {
-        if (!clicked) {
-            el.style.border = "1px solid black"
-            el.style.top = "16vh"
-            el.style.cursor = "default"
-        }
-    })
+import React, {useEffect, useState} from "react";
+import Card, {cardMouseMove, removeCard} from "./cardManager";
 
-    el.addEventListener('click', (e) => {
-        if (!clicked) {
-            clicked = true
-            document.getElementById("move-card").style.left = String(e.pageX)  + "px"
-            document.getElementById("move-card").style.top = String(e.pageY)  + "px"
-            removeCard("card" + i)
-            send({"number": i}, "click", true, (card) => {
-                addCardToCursor(card)
-                framesOn()
-            })
-        }
+let clicked = false
+
+export function mouseEnterOnCardDeck(app, el) {
+    if (!app.state.clicked) {
+        el.target.style.border = "2px solid blue"
+        el.target.style.top = "15vh"
+        el.target.style.cursor = "pointer"
+    }
+}
+
+export function mouseLeaveFromCardDeck(app, el) {
+    if (!app.state.clicked) {
+        el.target.style.border = "1px solid black"
+        el.target.style.top = "16vh"
+        el.target.style.cursor = "default"
+    }
+}
+
+export function click(app) {
+    send({"number": app.state.clickedCard.substring(4)}, "click", true, (card) => {
+        app.setState({clicked: true, clickedCard: card})
     })
 }
 
@@ -38,14 +33,14 @@ function framesOff() {
     document.querySelectorAll(".frame").forEach(e => e.style.display = "none")
 }
 
-function put() {
+function put(app) {
     for (let frame of document.querySelectorAll(".frame")) {
         frame.addEventListener('click', () => {
             let player = frame.className.split(" ")[1]
-            if (clicked) {
+            if (app.state.clicked) {
                 let card = document.getElementById("move-card").firstElementChild
                 send({"number": player, "data": card.id}, "put", true, () => {
-                    clicked = false
+                    app.setState({clicked: false})
                     removeCardFromCursor()
                     removeCard(card.id)
                     addCardToDeck(player, card.id)

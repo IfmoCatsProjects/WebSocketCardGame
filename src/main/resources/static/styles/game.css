@@ -23,6 +23,13 @@ body {
     position: relative;
 }
 
+.card {
+    width: 120px;
+    height: 180px;
+    position: absolute;
+    border: 1px solid black;
+    border-radius: 20px;
+}
 #move-card {
     position: absolute;
     z-index: 999;

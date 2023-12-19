@@ -1,23 +1,24 @@
-let width = 120;
-let height = width * 1.5;
-function createCard(selector, id, imgName, top, left) {
-    const img = document.createElement("img")
-    img.id = id
-    img.style = `
-        width: ${width}px;
-        height: ${height}px;
-        position: absolute;
-        top: ${top};
-        left: ${left};
-        border: 1px solid black;
-        border-radius: 20px;"`
-    img.src = `../../images/${imgName}.png`
-    document.querySelector(selector).appendChild(img)
-    return document.getElementById(id)
+import React from "react";
+
+export function Card(props){
+    return (<img id={props.id} className={"card "} style={{top: `${props.top}`,
+        left:`${props.left}`}} src={`../../images/${props.image}.png`}
+        onClick={props.onClick}
+        onMouseEnter={props.onMouseEnter}
+        onMouseLeave={props.onMouseLeave}/>)
 }
 
-function removeCard(id) {
-    document.getElementById(id).remove()
+export function ClickOnCardDeck(app) {
+    if (app.state.clicked) {
+        return (<div id={"move-card"} style={{top: String(app.state.cursorY) + "px", left: String(app.state.cursorX) + "px"}}
+                     onMouseMove={(el) => cardMouseMove(el)}>
+            <Card id={"move"} image={app.state.clickedCard}/>
+        </div>)
+    }
+}
+export function removeCard(id) {
+    let element = document.getElementById(id)
+    element.parentElement.removeChild(element)
 }
 
 function addCardToDeck(id, imgName) {
@@ -27,13 +28,9 @@ function addCardToDeck(id, imgName) {
     return card
 }
 
-function cardMouseMove(e) {
-    const el = document.querySelector('#move-card');
-    const target = e.target;
-    if (!target) return;
-
-    el.style.left = e.pageX - width/2 + 'px'
-    el.style.top = e.pageY - height/2 + 'px';
+export function cardMouseMove(el) {
+    el.target.style.left = el.target.pageX - 60 + 'px'
+    el.target.style.top = el.target.pageY - 90 + 'px';
 }
 function addCardToCursor(takenCard) {
     let clickedCard = createCard("#move-card", takenCard, takenCard, 0, 0)
