@@ -1,7 +1,7 @@
 import React from "react";
-import Card from "./cardManager";
+import {Card, ClickOnCardDeck} from "./cardManager";
 import {createRoot} from "react-dom/client";
-import {ClickOnCardDeck, mouseEnterOnCardDeck, mouseLeaveFromCardDeck, click} from "./events";
+import {mouseEnterOnCardDeck, mouseLeaveFromCardDeck, click} from "./events";
 
 class App extends React.Component {
     constructor(props) {
@@ -12,37 +12,37 @@ class App extends React.Component {
             cursorX: 0,
             cursorY: 0
         }
-        window.addEventListener("mousemove", (e) => {
-            this.state.cursorX = e.pageX
-            this.state.cursorY = e.pageY
-        })
     }
     createDeck() {
         let cards = []
         let offset = 18;
         for (let i = 0; i < 35; i++) {
             cards.push(<Card id={"card" + i} image={"shirt"} top={"16vh"} left={`${offset}vw`}
-             onClick={() => click()}
+             onClick={(el) => click(el, this)}
              onMouseEnter={(el) => mouseEnterOnCardDeck(this, el)}
              onMouseLeave={(el) => mouseLeaveFromCardDeck(this, el)}/>)
             offset = offset + 1.57
         }
         return cards
     }
+
     render() {
         let deck = this.createDeck()
 
         return (<div id={"main"}>
             <div id={"top"}>
-                <Card id={"1"} image={"shirt"} top={"0.5vh"} left={"46vw"} onClick={() => put(this)}/>
+                <Card id={"1"} image={"shirt"} top={"0.5vh"} left={"46vw"} display={"none"} onClick={() => put(this)}/>
+                <Card id={"frame1"} image={"shirt"} top={"0.5vh"} left={"46vw"} display={"none"} onClick={() => put(this)}/>
             </div>
             <div id={"center"}>
-                <Card id={"2"} image={"shirt"} top={"16vh"} left={"0.5vw"} onClick={() => put(this)}/>
+                <Card id={"2"} class={"player"} image={"shirt"} top={"16vh"} left={"0.5vw"} display={"none"} onClick={() => put(this)}/>
+                <Card id={"frame2"} image={"shirt"} top={"16vh"} left={"0.5vw"} display={"none"} onClick={() => put(this)}/>
                 {deck.map((e) => e)}
                 <Card id={"4"} image={this.props.common} top={"16vh"} left={"81vw"} onClick={() => put(this)}/>
             </div>
             <div id={"bottom"}>
-                <Card id={"0"} image={"shirt"} top={"0"} left={"46vw"} onClick={() => put(this)}/>
+                <Card id={"0"} class={"player"} image={"shirt"} top={"0"} left={"46vw"} display={"none"} onClick={() => put(this)}/>
+                <Card id={"frame 0"} class={"player"} image={"shirt"} top={"0"} left={"46vw"} display={"none"} onClick={() => put(this)}/>
             </div>
             <ClickOnCardDeck app={this}/>
         </div>)
@@ -50,11 +50,12 @@ class App extends React.Component {
 
 }
 document.getElementById("start").addEventListener("click", () => {
-    send({number: 12}, "connect", true, () => {
-        send({}, "start", true, (message) => {
-            createRoot(document.getElementById("root")).render(<App common={message}/>)
-        })
-    })
+    createRoot(document.getElementById("root")).render(<App />)
+    // send({number: 12}, "connect", true, () => {
+    //     send({}, "start", true, (message) => {
+    //         createRoot(document.getElementById("root")).render(<App common={message}/>)
+    //     })
+    // })
 })
 // function createFrames(players) {
 //     for (let player of players) {

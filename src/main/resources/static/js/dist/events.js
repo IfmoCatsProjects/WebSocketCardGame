@@ -21,10 +21,11 @@ __webpack_require__.r(__webpack_exports__);
 function Card(props) {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
     id: props.id,
-    className: "card ",
+    className: "card",
     style: {
-      top: `${props.top}`,
-      left: `${props.left}`
+      top: props.top,
+      left: props.left,
+      display: props.display
     },
     src: `../../images/${props.image}.png`,
     onClick: props.onClick,
@@ -32,15 +33,31 @@ function Card(props) {
     onMouseLeave: props.onMouseLeave
   });
 }
-function ClickOnCardDeck(app) {
+function ClickOnCardDeck(props) {
+  const [coordinates, setCoordinates] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
+    x: 0,
+    y: 0
+  });
+  const app = props.app;
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    const cardManager = event => {
+      setCoordinates({
+        x: event.pageX,
+        y: event.pageY
+      });
+    };
+    window.addEventListener('mousemove', cardManager);
+    return () => {
+      window.removeEventListener('mousemove', cardManager);
+    };
+  }, []);
   if (app.state.clicked) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       id: "move-card",
       style: {
-        top: String(app.state.cursorY) + "px",
-        left: String(app.state.cursorX) + "px"
-      },
-      onMouseMove: el => cardMouseMove(el)
+        top: String(coordinates.y - 90) + "px",
+        left: String(coordinates.x - 60) + "px"
+      }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(Card, {
       id: "move",
       image: app.state.clickedCard
@@ -2949,15 +2966,16 @@ function mouseLeaveFromCardDeck(app, el) {
     el.target.style.cursor = "default";
   }
 }
-function click(app) {
-  send({
-    "number": app.state.clickedCard.substring(4)
-  }, "click", true, card => {
-    app.setState({
-      clicked: true,
-      clickedCard: card
-    });
+function click(cardId, app) {
+  let id = cardId.target.id;
+  (0,_cardManager__WEBPACK_IMPORTED_MODULE_1__.removeCard)(cardId.target.id);
+  app.setState({
+    clicked: true
   });
+  // send({"number": id.substring(4)}, "click", true, (card) => {
+  //     removeCard(cardId.target.id)
+  //     app.setState({clicked: true, clickedCard: card})
+  // })
 }
 function framesOn() {
   document.querySelectorAll(".frame").forEach(e => e.style.display = "");

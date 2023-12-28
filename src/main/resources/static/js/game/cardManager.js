@@ -1,19 +1,39 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 
 export function Card(props){
-    return (<img id={props.id} className={"card "} style={{top: `${props.top}`,
-        left:`${props.left}`}} src={`../../images/${props.image}.png`}
+    return (<img id={props.id} className={"card"} style={{top: props.top,
+        left: props.left, display: props.display}} src={`../../images/${props.image}.png`}
         onClick={props.onClick}
         onMouseEnter={props.onMouseEnter}
         onMouseLeave={props.onMouseLeave}/>)
 }
 
-export function ClickOnCardDeck(app) {
+export function ClickOnCardDeck(props) {
+    const [coordinates, setCoordinates] = useState({x: 0, y: 0})
+    const app = props.app
+
+    useEffect(() => {
+        const cardManager = event => {
+            setCoordinates({
+                x: event.pageX,
+                y: event.pageY,
+            });
+        };
+        window.addEventListener('mousemove', cardManager);
+
+        return () => {
+            window.removeEventListener(
+                'mousemove',
+                cardManager,
+            );
+        };
+    }, []);
     if (app.state.clicked) {
-        return (<div id={"move-card"} style={{top: String(app.state.cursorY) + "px", left: String(app.state.cursorX) + "px"}}
-                     onMouseMove={(el) => cardMouseMove(el)}>
-            <Card id={"move"} image={app.state.clickedCard}/>
-        </div>)
+        return (
+            <div id={"move-card"} style={{top: String(coordinates.y - 90) + "px", left: String(coordinates.x - 60) + "px"}}>
+                <Card id={"move"} image={app.state.clickedCard}/>
+            </div>
+        )
     }
 }
 export function removeCard(id) {

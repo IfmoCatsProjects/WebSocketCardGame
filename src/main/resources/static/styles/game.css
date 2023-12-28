@@ -34,7 +34,6 @@ body {
     position: absolute;
     z-index: 999;
     pointer-events: none;
-    transform: translateY(-50%) translateX(-50%)
 }
 
 img.hidden {

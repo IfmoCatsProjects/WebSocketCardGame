@@ -19,10 +19,14 @@ export function mouseLeaveFromCardDeck(app, el) {
     }
 }
 
-export function click(app) {
-    send({"number": app.state.clickedCard.substring(4)}, "click", true, (card) => {
-        app.setState({clicked: true, clickedCard: card})
-    })
+export function click(cardId, app) {
+    let id = cardId.target.id
+    removeCard(cardId.target.id)
+    app.setState({clicked: true})
+    // send({"number": id.substring(4)}, "click", true, (card) => {
+    //     removeCard(cardId.target.id)
+    //     app.setState({clicked: true, clickedCard: card})
+    // })
 }
 
 function framesOn() {

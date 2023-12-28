@@ -21,10 +21,11 @@ __webpack_require__.r(__webpack_exports__);
 function Card(props) {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
     id: props.id,
-    className: "card ",
+    className: "card",
     style: {
-      top: `${props.top}`,
-      left: `${props.left}`
+      top: props.top,
+      left: props.left,
+      display: props.display
     },
     src: `../../images/${props.image}.png`,
     onClick: props.onClick,
@@ -32,15 +33,31 @@ function Card(props) {
     onMouseLeave: props.onMouseLeave
   });
 }
-function ClickOnCardDeck(app) {
+function ClickOnCardDeck(props) {
+  const [coordinates, setCoordinates] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
+    x: 0,
+    y: 0
+  });
+  const app = props.app;
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    const cardManager = event => {
+      setCoordinates({
+        x: event.pageX,
+        y: event.pageY
+      });
+    };
+    window.addEventListener('mousemove', cardManager);
+    return () => {
+      window.removeEventListener('mousemove', cardManager);
+    };
+  }, []);
   if (app.state.clicked) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       id: "move-card",
       style: {
-        top: String(app.state.cursorY) + "px",
-        left: String(app.state.cursorX) + "px"
-      },
-      onMouseMove: el => cardMouseMove(el)
+        top: String(coordinates.y - 90) + "px",
+        left: String(coordinates.x - 60) + "px"
+      }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(Card, {
       id: "move",
       image: app.state.clickedCard
@@ -104,15 +121,16 @@ function mouseLeaveFromCardDeck(app, el) {
     el.target.style.cursor = "default";
   }
 }
-function click(app) {
-  send({
-    "number": app.state.clickedCard.substring(4)
-  }, "click", true, card => {
-    app.setState({
-      clicked: true,
-      clickedCard: card
-    });
+function click(cardId, app) {
+  let id = cardId.target.id;
+  (0,_cardManager__WEBPACK_IMPORTED_MODULE_1__.removeCard)(cardId.target.id);
+  app.setState({
+    clicked: true
   });
+  // send({"number": id.substring(4)}, "click", true, (card) => {
+  //     removeCard(cardId.target.id)
+  //     app.setState({clicked: true, clickedCard: card})
+  // })
 }
 function framesOn() {
   document.querySelectorAll(".frame").forEach(e => e.style.display = "");
@@ -33641,21 +33659,17 @@ class App extends (react__WEBPACK_IMPORTED_MODULE_0___default().Component) {
       cursorX: 0,
       cursorY: 0
     };
-    window.addEventListener("mousemove", e => {
-      this.state.cursorX = e.pageX;
-      this.state.cursorY = e.pageY;
-    });
   }
   createDeck() {
     let cards = [];
     let offset = 18;
     for (let i = 0; i < 35; i++) {
-      cards.push( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      cards.push( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
         id: "card" + i,
         image: "shirt",
         top: "16vh",
         left: `${offset}vw`,
-        onClick: () => (0,_events__WEBPACK_IMPORTED_MODULE_3__.click)(),
+        onClick: el => (0,_events__WEBPACK_IMPORTED_MODULE_3__.click)(el, this),
         onMouseEnter: el => (0,_events__WEBPACK_IMPORTED_MODULE_3__.mouseEnterOnCardDeck)(this, el),
         onMouseLeave: el => (0,_events__WEBPACK_IMPORTED_MODULE_3__.mouseLeaveFromCardDeck)(this, el)
       }));
@@ -33669,21 +33683,38 @@ class App extends (react__WEBPACK_IMPORTED_MODULE_0___default().Component) {
       id: "main"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       id: "top"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
       id: "1",
       image: "shirt",
       top: "0.5vh",
       left: "46vw",
+      display: "none",
+      onClick: () => put(this)
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
+      id: "frame1",
+      image: "shirt",
+      top: "0.5vh",
+      left: "46vw",
+      display: "none",
       onClick: () => put(this)
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       id: "center"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
       id: "2",
+      class: "player",
       image: "shirt",
       top: "16vh",
       left: "0.5vw",
+      display: "none",
       onClick: () => put(this)
-    }), deck.map(e => e), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
+      id: "frame2",
+      image: "shirt",
+      top: "16vh",
+      left: "0.5vw",
+      display: "none",
+      onClick: () => put(this)
+    }), deck.map(e => e), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
       id: "4",
       image: this.props.common,
       top: "16vh",
@@ -33691,27 +33722,34 @@ class App extends (react__WEBPACK_IMPORTED_MODULE_0___default().Component) {
       onClick: () => put(this)
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       id: "bottom"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
       id: "0",
+      class: "player",
       image: "shirt",
       top: "0",
       left: "46vw",
+      display: "none",
       onClick: () => put(this)
-    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_3__.ClickOnCardDeck, {
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
+      id: "frame 0",
+      class: "player",
+      image: "shirt",
+      top: "0",
+      left: "46vw",
+      display: "none",
+      onClick: () => put(this)
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.ClickOnCardDeck, {
       app: this
     }));
   }
 }
 document.getElementById("start").addEventListener("click", () => {
-  send({
-    number: 12
-  }, "connect", true, () => {
-    send({}, "start", true, message => {
-      (0,react_dom_client__WEBPACK_IMPORTED_MODULE_2__.createRoot)(document.getElementById("root")).render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(App, {
-        common: message
-      }));
-    });
-  });
+  (0,react_dom_client__WEBPACK_IMPORTED_MODULE_2__.createRoot)(document.getElementById("root")).render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(App, null));
+  // send({number: 12}, "connect", true, () => {
+  //     send({}, "start", true, (message) => {
+  //         createRoot(document.getElementById("root")).render(<App common={message}/>)
+  //     })
+  // })
 });
 // function createFrames(players) {
 //     for (let player of players) {
