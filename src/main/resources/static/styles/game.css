@@ -34,7 +34,7 @@ body {
     position: absolute;
     z-index: 999;
     pointer-events: none;
-}
+} 
 
 img.hidden {
     visibility: hidden;
