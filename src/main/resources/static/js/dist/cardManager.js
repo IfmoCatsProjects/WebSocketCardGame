@@ -2900,8 +2900,8 @@ function ClickOnCardDeck(props) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       id: "move-card",
       style: {
-        top: String(coordinates.y - 90) + "px",
-        left: String(coordinates.x - 60) + "px"
+        top: `${coordinates.y}px`,
+        left: `${coordinates.x}px`
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(Card, {
       id: "move",

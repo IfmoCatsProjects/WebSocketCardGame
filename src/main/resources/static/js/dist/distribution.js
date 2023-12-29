@@ -55,8 +55,8 @@ function ClickOnCardDeck(props) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       id: "move-card",
       style: {
-        top: String(coordinates.y - 90) + "px",
-        left: String(coordinates.x - 60) + "px"
+        top: `${coordinates.y}px`,
+        left: `${coordinates.x}px`
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(Card, {
       id: "move",
@@ -97,6 +97,7 @@ function removeCardFromCursor() {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Frame: () => (/* binding */ Frame),
 /* harmony export */   click: () => (/* binding */ click),
 /* harmony export */   mouseEnterOnCardDeck: () => (/* binding */ mouseEnterOnCardDeck),
 /* harmony export */   mouseLeaveFromCardDeck: () => (/* binding */ mouseLeaveFromCardDeck)
@@ -110,14 +111,14 @@ let clicked = false;
 function mouseEnterOnCardDeck(app, el) {
   if (!app.state.clicked) {
     el.target.style.border = "2px solid blue";
-    el.target.style.top = "15vh";
+    el.target.style.top = "26vh";
     el.target.style.cursor = "pointer";
   }
 }
 function mouseLeaveFromCardDeck(app, el) {
   if (!app.state.clicked) {
     el.target.style.border = "1px solid black";
-    el.target.style.top = "16vh";
+    el.target.style.top = "27vh";
     el.target.style.cursor = "default";
   }
 }
@@ -132,33 +133,26 @@ function click(cardId, app) {
   //     app.setState({clicked: true, clickedCard: card})
   // })
 }
-function framesOn() {
-  document.querySelectorAll(".frame").forEach(e => e.style.display = "");
-}
-function framesOff() {
-  document.querySelectorAll(".frame").forEach(e => e.style.display = "none");
-}
-function put(app) {
-  for (let frame of document.querySelectorAll(".frame")) {
-    frame.addEventListener('click', () => {
-      let player = frame.className.split(" ")[1];
-      if (app.state.clicked) {
-        let card = document.getElementById("move-card").firstElementChild;
-        send({
-          "number": player,
-          "data": card.id
-        }, "put", true, () => {
-          app.setState({
-            clicked: false
-          });
-          removeCardFromCursor();
-          (0,_cardManager__WEBPACK_IMPORTED_MODULE_1__.removeCard)(card.id);
-          addCardToDeck(player, card.id);
-          framesOff();
-        });
-      }
+function Frame(props) {
+  if (props.app.state.clicked) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      id: props.id,
+      className: "card frame",
+      style: {
+        top: String(props.top),
+        left: String(props.left)
+      },
+      onClick: el => put(props.app)
     });
   }
+}
+function put(app, frame) {
+  app.setState({
+    clicked: false
+  });
+  // send({"number": frame.target.id.substring(5), "data": app.state.clickedCard}, "put", true, () => {
+  //     app.setState({clicked: false})
+  // })
 }
 function take() {
   document.getElementById("0").addEventListener('click', () => {
@@ -33662,12 +33656,12 @@ class App extends (react__WEBPACK_IMPORTED_MODULE_0___default().Component) {
   }
   createDeck() {
     let cards = [];
-    let offset = 18;
+    let offset = 21;
     for (let i = 0; i < 35; i++) {
       cards.push( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
         id: "card" + i,
         image: "shirt",
-        top: "16vh",
+        top: "27vh",
         left: `${offset}vw`,
         onClick: el => (0,_events__WEBPACK_IMPORTED_MODULE_3__.click)(el, this),
         onMouseEnter: el => (0,_events__WEBPACK_IMPORTED_MODULE_3__.mouseEnterOnCardDeck)(this, el),
@@ -33686,58 +33680,49 @@ class App extends (react__WEBPACK_IMPORTED_MODULE_0___default().Component) {
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
       id: "1",
       image: "shirt",
-      top: "0.5vh",
-      left: "46vw",
+      top: "12vh",
+      left: "50vw",
       display: "none",
       onClick: () => put(this)
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_3__.Frame, {
       id: "frame1",
-      image: "shirt",
-      top: "0.5vh",
-      left: "46vw",
-      display: "none",
-      onClick: () => put(this)
+      top: "12vh",
+      left: "50vw",
+      app: this
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       id: "center"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
       id: "2",
-      class: "player",
       image: "shirt",
-      top: "16vh",
+      top: "27vh",
       left: "0.5vw",
       display: "none",
       onClick: () => put(this)
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_3__.Frame, {
       id: "frame2",
-      image: "shirt",
-      top: "16vh",
-      left: "0.5vw",
-      display: "none",
-      onClick: () => put(this)
+      top: "27vh",
+      left: "5vw",
+      app: this
     }), deck.map(e => e), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
       id: "4",
       image: this.props.common,
-      top: "16vh",
-      left: "81vw",
+      top: "27vh",
+      left: "84vw",
       onClick: () => put(this)
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       id: "bottom"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
       id: "0",
-      class: "player",
       image: "shirt",
-      top: "0",
-      left: "46vw",
+      top: "10vh",
+      left: "50vw",
       display: "none",
       onClick: () => put(this)
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_3__.Frame, {
       id: "frame 0",
-      class: "player",
-      image: "shirt",
-      top: "0",
-      left: "46vw",
-      display: "none",
-      onClick: () => put(this)
+      top: "10vh",
+      left: "50vw",
+      app: this
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.ClickOnCardDeck, {
       app: this
     }));
@@ -33751,38 +33736,6 @@ document.getElementById("start").addEventListener("click", () => {
   //     })
   // })
 });
-// function createFrames(players) {
-//     for (let player of players) {
-//         let frame = document.createElement('div')
-//
-//         frame.className = "frame " + player.id
-//         frame.style.width = "120px"
-//         frame.style.height = player.style.height
-//         frame.style.position = "absolute"
-//         frame.style.top = player.style.top
-//         frame.style.left = player.style.left
-//         frame.style.border = "3px solid lime"
-//         frame.style.borderRadius = "20px"
-//         frame.style.display = "none"
-//
-//         frame.addEventListener("mouseenter", () => {
-//             frame.style.cursor = "pointer"
-//         })
-//         frame.addEventListener("mouseleave", () => {
-//             frame.style.cursor = "default"
-//         })
-//         document.getElementById(player.parentNode.id).appendChild(frame)
-//     }
-// }
-//
-// document.getElementById("start").addEventListener("click", () => {
-//     send({number: 12}, "connect", true, (msg) => {
-//         send({}, "start", true, (message) => {
-//             createCard("#center", "3", message, "16vh", "81vw")
-//             distribution()
-//         })
-//     })
-// })
 })();
 
 /******/ })()

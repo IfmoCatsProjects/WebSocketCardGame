@@ -6,7 +6,7 @@ let clicked = false
 export function mouseEnterOnCardDeck(app, el) {
     if (!app.state.clicked) {
         el.target.style.border = "2px solid blue"
-        el.target.style.top = "15vh"
+        el.target.style.top = "26vh"
         el.target.style.cursor = "pointer"
     }
 }
@@ -14,7 +14,7 @@ export function mouseEnterOnCardDeck(app, el) {
 export function mouseLeaveFromCardDeck(app, el) {
     if (!app.state.clicked) {
         el.target.style.border = "1px solid black"
-        el.target.style.top = "16vh"
+        el.target.style.top = "27vh"
         el.target.style.cursor = "default"
     }
 }
@@ -29,30 +29,18 @@ export function click(cardId, app) {
     // })
 }
 
-function framesOn() {
-    document.querySelectorAll(".frame").forEach(e => e.style.display = "")
-}
-
-function framesOff() {
-    document.querySelectorAll(".frame").forEach(e => e.style.display = "none")
-}
-
-function put(app) {
-    for (let frame of document.querySelectorAll(".frame")) {
-        frame.addEventListener('click', () => {
-            let player = frame.className.split(" ")[1]
-            if (app.state.clicked) {
-                let card = document.getElementById("move-card").firstElementChild
-                send({"number": player, "data": card.id}, "put", true, () => {
-                    app.setState({clicked: false})
-                    removeCardFromCursor()
-                    removeCard(card.id)
-                    addCardToDeck(player, card.id)
-                    framesOff()
-                })
-            }
-        })
+export function Frame(props) {
+    if (props.app.state.clicked) {
+        return (<div id={props.id} className={"card frame"} style={{top: String(props.top), left: String(props.left)}}
+                     onClick={el => put(props.app)}></div>)
     }
+}
+
+function put(app, frame) {
+    app.setState({clicked: false})
+    // send({"number": frame.target.id.substring(5), "data": app.state.clickedCard}, "put", true, () => {
+    //     app.setState({clicked: false})
+    // })
 }
 function take() {
     document.getElementById("0").addEventListener('click', () => {

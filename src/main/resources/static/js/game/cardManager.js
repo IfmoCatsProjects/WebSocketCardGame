@@ -30,7 +30,7 @@ export function ClickOnCardDeck(props) {
     }, []);
     if (app.state.clicked) {
         return (
-            <div id={"move-card"} style={{top: String(coordinates.y - 90) + "px", left: String(coordinates.x - 60) + "px"}}>
+            <div id={"move-card"} style={{top: `${coordinates.y}px`, left: `${coordinates.x}px`}}>
                 <Card id={"move"} image={app.state.clickedCard}/>
             </div>
         )

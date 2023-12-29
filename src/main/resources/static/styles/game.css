@@ -29,12 +29,17 @@ body {
     position: absolute;
     border: 1px solid black;
     border-radius: 20px;
+    transform: translateY(-50%) translateX(-50%);
+}
+
+.frame {
+    border: 3px solid lime;
 }
 #move-card {
     position: absolute;
     z-index: 999;
     pointer-events: none;
-} 
+}
 
 img.hidden {
     visibility: hidden;
