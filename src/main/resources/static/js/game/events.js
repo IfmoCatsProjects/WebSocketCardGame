@@ -37,7 +37,7 @@ export function Frame(props) {
 }
 
 function put(app, frame) {
-    app.setState({clicked: false})
+    app.setState({clicked: false}) 
     // send({"number": frame.target.id.substring(5), "data": app.state.clickedCard}, "put", true, () => {
     //     app.setState({clicked: false})
     // })
