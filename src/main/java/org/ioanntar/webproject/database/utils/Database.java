@@ -10,7 +10,7 @@ import java.util.List;
 public class Database {
 
     private final Session session;
-    private final Transaction transaction;
+    private Transaction transaction;
 
     public Database() {
         session = HibernateUtils.getSessionFactory().openSession();
@@ -32,6 +32,11 @@ public class Database {
     }
 
     public void commit() {
+        transaction.commit();
+        transaction = session.beginTransaction();
+    }
+
+    public void close() {
         transaction.commit();
         session.close();
     }

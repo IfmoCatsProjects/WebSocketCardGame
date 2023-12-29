@@ -1,7 +1,7 @@
 import React from "react";
 import {Card, ClickOnCardDeck} from "./cardManager";
 import {createRoot} from "react-dom/client";
-import {mouseEnterOnCardDeck, mouseLeaveFromCardDeck, click, Frame} from "./events";
+import {mouseEnterOnCardDeck, mouseLeaveFromCardDeck, click, Frame, put, take} from "./events";
 
 class App extends React.Component {
     constructor(props) {
@@ -31,18 +31,23 @@ class App extends React.Component {
 
         return (<div id={"main"}>
             <div id={"top"}>
-                <Card id={"1"} image={"shirt"} top={"12vh"} left={"50vw"} display={"none"} onClick={() => put(this)}/>
-                <Frame id={"frame1"} top={"12vh"} left={"50vw"} app={this}/>
+                <button onClick={(el) => {send({}, "close", true, () => {}); el.target.disabled = true}}>Stop</button>
+
+                <Card id={"1"} image={"shirt"} top={"12vh"} left={"50vw"} display={"none"} />
+                <Frame id={"frame1"} top={"12vh"} left={"50vw"} app={this} onClick={(frame) => put(this, frame)}/>
             </div>
             <div id={"center"}>
-                <Card id={"2"} image={"shirt"} top={"27vh"} left={"0.5vw"} display={"none"} onClick={() => put(this)}/>
-                <Frame id={"frame2"} top={"27vh"} left={"5vw"} app={this}/>
+                <Card id={"2"} image={"shirt"} top={"27vh"} left={"5vw"} display={"none"} />
+                <Frame id={"frame2"} top={"27vh"} left={"5vw"} app={this} onClick={(frame) => put(this, frame)}/>
+
                 {deck.map((e) => e)}
-                <Card id={"4"} image={this.props.common} top={"27vh"} left={"84vw"} onClick={() => put(this)}/>
+
+                <Card id={"3"} image={this.props.common} top={"27vh"} left={"84vw"} />
+                <Frame id={"frame3"} top={"27vh"} left={"84vw"} app={this} onClick={(frame) => put(this, frame)}/>
             </div>
             <div id={"bottom"}>
-                <Card id={"0"} image={"shirt"} top={"10vh"} left={"50vw"} display={"none"} onClick={() => put(this)}/>
-                <Frame id={"frame 0"} top={"10vh"} left={"50vw"} app={this}/>
+                <Card id={"0"} image={"shirt"} top={"10vh"} left={"50vw"} display={"none"} onClick={() => take(this)}/>
+                <Frame id={"frame0"} top={"10vh"} left={"50vw"} app={this} onClick={(frame) => put(this, frame)}/>
             </div>
             <ClickOnCardDeck app={this}/>
         </div>)
@@ -50,10 +55,9 @@ class App extends React.Component {
 
 }
 document.getElementById("start").addEventListener("click", () => {
-    createRoot(document.getElementById("root")).render(<App />)
-    // send({number: 12}, "connect", true, () => {
-    //     send({}, "start", true, (message) => {
-    //         createRoot(document.getElementById("root")).render(<App common={message}/>)
-    //     })
-    // })
+    send({number: 12}, "connect", true, () => {
+        send({}, "start", true, (message) => {
+            createRoot(document.getElementById("root")).render(<App common={message}/>)
+        })
+    })
 })

@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from "react";
 import Card, {cardMouseMove, removeCard} from "./cardManager";
 
-let clicked = false
-
 export function mouseEnterOnCardDeck(app, el) {
     if (!app.state.clicked) {
         el.target.style.border = "2px solid blue"
@@ -20,44 +18,46 @@ export function mouseLeaveFromCardDeck(app, el) {
 }
 
 export function click(cardId, app) {
-    let id = cardId.target.id
-    removeCard(cardId.target.id)
-    app.setState({clicked: true})
-    // send({"number": id.substring(4)}, "click", true, (card) => {
-    //     removeCard(cardId.target.id)
-    //     app.setState({clicked: true, clickedCard: card})
-    // })
+    if (!app.state.clicked) {
+        let id = cardId.target.id
+        send({"number": id.substring(4)}, "click", true, (card) => {
+            removeCard(cardId.target.id)
+            app.setState({clicked: true, clickedCard: card})
+        })
+    }
 }
 
 export function Frame(props) {
     if (props.app.state.clicked) {
         return (<div id={props.id} className={"card frame"} style={{top: String(props.top), left: String(props.left)}}
-                     onClick={el => put(props.app)}></div>)
+                     onClick={props.onClick}></div>)
     }
 }
 
-function put(app, frame) {
-    app.setState({clicked: false}) 
-    // send({"number": frame.target.id.substring(5), "data": app.state.clickedCard}, "put", true, () => {
-    //     app.setState({clicked: false})
-    // })
+export function put(app, frame) {
+    if (app.state.clicked) {
+        app.setState({clicked: false})
+        let id = frame.target.id.substring(5)
+        send({"number": id, "data": app.state.clickedCard}, "put", true, () => {
+            let playerCard = document.getElementById(id)
+            playerCard.style.display = ""
+            playerCard.src = `../../images/${app.state.clickedCard}.png`
+        })
+    }
 }
-function take() {
-    document.getElementById("0").addEventListener('click', () => {
-        if(!clicked) {
-            send({}, "take", true, (msg) => {
-                clicked = true
-                let takenCard = msg.split(" ")[0]
-                let subCard = msg.split(" ")[1]
-                addCardToCursor(takenCard)
-                framesOn()
-                console.log(msg)
-                if(subCard === "none") {
-                    document.getElementById("0").style.display = "none"
-                } else {
-                    document.getElementById("0").src = `images/${subCard}.png`
-                }
-            })
-        }
-    })
+
+export function take(app) {
+    if (!app.state.clicked) {
+        send({}, "take", true, (msg) => {
+            let takenCard = msg.split(" ")[0]
+            let subCard = msg.split(" ")[1]
+            app.setState({clicked: true, clickedCard: takenCard})
+
+            if(subCard === "none") {
+                document.getElementById("0").style.display = "none"
+            } else {
+                document.getElementById("0").src = `../../images/${subCard}.png`
+            }
+        })
+    }
 }

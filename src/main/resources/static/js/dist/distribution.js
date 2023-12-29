@@ -78,14 +78,6 @@ function cardMouseMove(el) {
   el.target.style.left = el.target.pageX - 60 + 'px';
   el.target.style.top = el.target.pageY - 90 + 'px';
 }
-function addCardToCursor(takenCard) {
-  let clickedCard = createCard("#move-card", takenCard, takenCard, 0, 0);
-  clickedCard.style.pointerEvents = "none";
-  window.addEventListener('mousemove', e => cardMouseMove(e));
-}
-function removeCardFromCursor() {
-  window.removeEventListener('mousemove', e => cardMouseMove(e));
-}
 
 /***/ }),
 
@@ -100,14 +92,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Frame: () => (/* binding */ Frame),
 /* harmony export */   click: () => (/* binding */ click),
 /* harmony export */   mouseEnterOnCardDeck: () => (/* binding */ mouseEnterOnCardDeck),
-/* harmony export */   mouseLeaveFromCardDeck: () => (/* binding */ mouseLeaveFromCardDeck)
+/* harmony export */   mouseLeaveFromCardDeck: () => (/* binding */ mouseLeaveFromCardDeck),
+/* harmony export */   put: () => (/* binding */ put),
+/* harmony export */   take: () => (/* binding */ take)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _cardManager__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./cardManager */ "./src/main/resources/static/js/game/cardManager.js");
 
 
-let clicked = false;
 function mouseEnterOnCardDeck(app, el) {
   if (!app.state.clicked) {
     el.target.style.border = "2px solid blue";
@@ -123,15 +116,18 @@ function mouseLeaveFromCardDeck(app, el) {
   }
 }
 function click(cardId, app) {
-  let id = cardId.target.id;
-  (0,_cardManager__WEBPACK_IMPORTED_MODULE_1__.removeCard)(cardId.target.id);
-  app.setState({
-    clicked: true
-  });
-  // send({"number": id.substring(4)}, "click", true, (card) => {
-  //     removeCard(cardId.target.id)
-  //     app.setState({clicked: true, clickedCard: card})
-  // })
+  if (!app.state.clicked) {
+    let id = cardId.target.id;
+    send({
+      "number": id.substring(4)
+    }, "click", true, card => {
+      (0,_cardManager__WEBPACK_IMPORTED_MODULE_1__.removeCard)(cardId.target.id);
+      app.setState({
+        clicked: true,
+        clickedCard: card
+      });
+    });
+  }
 }
 function Frame(props) {
   if (props.app.state.clicked) {
@@ -142,36 +138,42 @@ function Frame(props) {
         top: String(props.top),
         left: String(props.left)
       },
-      onClick: el => put(props.app)
+      onClick: props.onClick
     });
   }
 }
 function put(app, frame) {
-  app.setState({
-    clicked: false
-  });
-  // send({"number": frame.target.id.substring(5), "data": app.state.clickedCard}, "put", true, () => {
-  //     app.setState({clicked: false})
-  // })
+  if (app.state.clicked) {
+    app.setState({
+      clicked: false
+    });
+    let id = frame.target.id.substring(5);
+    send({
+      "number": id,
+      "data": app.state.clickedCard
+    }, "put", true, () => {
+      let playerCard = document.getElementById(id);
+      playerCard.style.display = "";
+      playerCard.src = `../../images/${app.state.clickedCard}.png`;
+    });
+  }
 }
-function take() {
-  document.getElementById("0").addEventListener('click', () => {
-    if (!clicked) {
-      send({}, "take", true, msg => {
-        clicked = true;
-        let takenCard = msg.split(" ")[0];
-        let subCard = msg.split(" ")[1];
-        addCardToCursor(takenCard);
-        framesOn();
-        console.log(msg);
-        if (subCard === "none") {
-          document.getElementById("0").style.display = "none";
-        } else {
-          document.getElementById("0").src = `images/${subCard}.png`;
-        }
+function take(app) {
+  if (!app.state.clicked) {
+    send({}, "take", true, msg => {
+      let takenCard = msg.split(" ")[0];
+      let subCard = msg.split(" ")[1];
+      app.setState({
+        clicked: true,
+        clickedCard: takenCard
       });
-    }
-  });
+      if (subCard === "none") {
+        document.getElementById("0").style.display = "none";
+      } else {
+        document.getElementById("0").src = `../../images/${subCard}.png`;
+      }
+    });
+  }
 }
 
 /***/ }),
@@ -33677,38 +33679,48 @@ class App extends (react__WEBPACK_IMPORTED_MODULE_0___default().Component) {
       id: "main"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       id: "top"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
+      onClick: el => {
+        send({}, "close", true, () => {});
+        el.target.disabled = true;
+      }
+    }, "Stop"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
       id: "1",
       image: "shirt",
       top: "12vh",
       left: "50vw",
-      display: "none",
-      onClick: () => put(this)
+      display: "none"
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_3__.Frame, {
       id: "frame1",
       top: "12vh",
       left: "50vw",
-      app: this
+      app: this,
+      onClick: frame => (0,_events__WEBPACK_IMPORTED_MODULE_3__.put)(this, frame)
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       id: "center"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
       id: "2",
       image: "shirt",
       top: "27vh",
-      left: "0.5vw",
-      display: "none",
-      onClick: () => put(this)
+      left: "5vw",
+      display: "none"
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_3__.Frame, {
       id: "frame2",
       top: "27vh",
       left: "5vw",
-      app: this
+      app: this,
+      onClick: frame => (0,_events__WEBPACK_IMPORTED_MODULE_3__.put)(this, frame)
     }), deck.map(e => e), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
-      id: "4",
+      id: "3",
       image: this.props.common,
       top: "27vh",
+      left: "84vw"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_3__.Frame, {
+      id: "frame3",
+      top: "27vh",
       left: "84vw",
-      onClick: () => put(this)
+      app: this,
+      onClick: frame => (0,_events__WEBPACK_IMPORTED_MODULE_3__.put)(this, frame)
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       id: "bottom"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
@@ -33717,24 +33729,28 @@ class App extends (react__WEBPACK_IMPORTED_MODULE_0___default().Component) {
       top: "10vh",
       left: "50vw",
       display: "none",
-      onClick: () => put(this)
+      onClick: () => (0,_events__WEBPACK_IMPORTED_MODULE_3__.take)(this)
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_3__.Frame, {
-      id: "frame 0",
+      id: "frame0",
       top: "10vh",
       left: "50vw",
-      app: this
+      app: this,
+      onClick: frame => (0,_events__WEBPACK_IMPORTED_MODULE_3__.put)(this, frame)
     })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.ClickOnCardDeck, {
       app: this
     }));
   }
 }
 document.getElementById("start").addEventListener("click", () => {
-  (0,react_dom_client__WEBPACK_IMPORTED_MODULE_2__.createRoot)(document.getElementById("root")).render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(App, null));
-  // send({number: 12}, "connect", true, () => {
-  //     send({}, "start", true, (message) => {
-  //         createRoot(document.getElementById("root")).render(<App common={message}/>)
-  //     })
-  // })
+  send({
+    number: 12
+  }, "connect", true, () => {
+    send({}, "start", true, message => {
+      (0,react_dom_client__WEBPACK_IMPORTED_MODULE_2__.createRoot)(document.getElementById("root")).render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(App, {
+        common: message
+      }));
+    });
+  });
 });
 })();
 

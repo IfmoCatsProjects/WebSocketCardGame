@@ -16,10 +16,10 @@ public class GameController {
 
     @Autowired
     private SimpMessagingTemplate template;
+    private final Database database = new Database();
 
     @MessageMapping("/connect")
     public void connect(SimpMessageHeaderAccessor sha, Request request) {
-        Database database = new Database();
         Game game = database.get(Game.class, 22);
 
         Player player = database.get(Player.class, request.getNumber());
@@ -34,7 +34,15 @@ public class GameController {
 
     @MessageMapping("/start")
     public void start(SimpMessageHeaderAccessor sha) {
-        Database database = new Database();
+//        Game game1 = database.get(Game.class, 22);//TODO временная очистка всех игр
+//        try {
+//            game1.getGameDecks().clear();
+//            for (Player player: game1.getPlayers()) {
+//                player.getPlayersDeck().clear();
+//            }
+//        } catch (NullPointerException ignored) {}
+//        database.commit();
+
         long id = (long) sha.getSessionAttributes().get("gameId");
         Game game = database.get(Game.class, id);
 
@@ -53,7 +61,6 @@ public class GameController {
     @MessageMapping("/click")
     public void click(Request data, SimpMessageHeaderAccessor headerAccessor) {
         long id = (long) headerAccessor.getSessionAttributes().get("gameId");
-        Database database = new Database();
         Game game = database.get(Game.class, id);
         GameCard card = game.getGameDecks().stream().filter(c -> c.getPosition() == data.getNumber()).findFirst().get();
 
@@ -65,7 +72,6 @@ public class GameController {
     @MessageMapping("/put")
     public void put(Request data, SimpMessageHeaderAccessor headerAccessor) {
         long id = (long) headerAccessor.getSessionAttributes().get("gameId");
-        Database database = new Database();
         Game game = database.get(Game.class, id);
 
         if (data.getNumber() == 3) {
@@ -86,7 +92,6 @@ public class GameController {
     @MessageMapping("/take")
     public void take(SimpMessageHeaderAccessor headerAccessor) {
         long id = (long) headerAccessor.getSessionAttributes().get("playerId");
-        Database database = new Database();
         Player player = database.get(Player.class, id);
 
         List<PlayerCard> deck = player.getPlayersDeck();
@@ -94,6 +99,12 @@ public class GameController {
         deck.remove(deck.size() - 1);
         String subCard = deck.size() != 0 ? deck.get(deck.size() - 1).getCard() : "none";
         new Response(player.getGame()).sendToPlayers(template, card + " " + subCard);
+
         database.commit();
+    }
+
+    @MessageMapping("/close")
+    public void closeDataBase() {
+        database.close();
     }
 }

@@ -2923,14 +2923,6 @@ function cardMouseMove(el) {
   el.target.style.left = el.target.pageX - 60 + 'px';
   el.target.style.top = el.target.pageY - 90 + 'px';
 }
-function addCardToCursor(takenCard) {
-  let clickedCard = createCard("#move-card", takenCard, takenCard, 0, 0);
-  clickedCard.style.pointerEvents = "none";
-  window.addEventListener('mousemove', e => cardMouseMove(e));
-}
-function removeCardFromCursor() {
-  window.removeEventListener('mousemove', e => cardMouseMove(e));
-}
 })();
 
 /******/ })()
