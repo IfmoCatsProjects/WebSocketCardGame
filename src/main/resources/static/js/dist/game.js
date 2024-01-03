@@ -2,419 +2,353 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/main/resources/static/js/app.js":
-/*!*********************************************!*\
-  !*** ./src/main/resources/static/js/app.js ***!
-  \*********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   DataContext: () => (/* binding */ DataContext)
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _start_start__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./start/start */ "./src/main/resources/static/js/start/start.js");
-/* harmony import */ var react_dom_client__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-dom/client */ "./node_modules/react-dom/client.js");
-/* harmony import */ var _start_example__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./start/example */ "./src/main/resources/static/js/start/example.js");
-
-
-
-
-const DataContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)(null);
-function App() {
-  const [page, setPage] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("start");
-  const [data, setData] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
-    name: "",
-    weight: "",
-    rating: ""
-  });
-  switch (page) {
-    case "start":
-      {
-        return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(DataContext.Provider, {
-          value: {
-            setData,
-            setPage
-          }
-        }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_start_start__WEBPACK_IMPORTED_MODULE_1__.Start, null));
-      }
-    case "game":
-      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(DataContext.Provider, {
-        value: data
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_start_example__WEBPACK_IMPORTED_MODULE_3__.Example, null));
-  }
-}
-(0,react_dom_client__WEBPACK_IMPORTED_MODULE_2__.createRoot)(document.getElementById("root")).render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(App, null));
-
-/***/ }),
-
-/***/ "./src/main/resources/static/js/start/example.js":
-/*!*******************************************************!*\
-  !*** ./src/main/resources/static/js/start/example.js ***!
-  \*******************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Example: () => (/* binding */ Example)
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _app__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../app */ "./src/main/resources/static/js/app.js");
-
-
-function Example() {
-  const data = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_app__WEBPACK_IMPORTED_MODULE_1__.DataContext);
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    id: "main"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("b", null, "\u0418\u043C\u044F: "), data.name, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("b", null, "\u0412\u0435\u0441: "), data.weight, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("b", null, "\u0420\u0435\u0439\u0442\u0438\u043D\u0433: "), data.rating);
-}
-
-/***/ }),
-
-/***/ "./src/main/resources/static/js/start/forms.js":
-/*!*****************************************************!*\
-  !*** ./src/main/resources/static/js/start/forms.js ***!
-  \*****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Forms: () => (/* binding */ Forms)
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _app__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../app */ "./src/main/resources/static/js/app.js");
-/* harmony import */ var _startUtils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./startUtils */ "./src/main/resources/static/js/start/startUtils.js");
-
-
-
-function EnterForm(props) {
-  const [enterInputs, setEnterInputs] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
-    email: "",
-    password: ""
-  });
-  const {
-    setData,
-    setPage
-  } = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_app__WEBPACK_IMPORTED_MODULE_1__.DataContext);
-  const send = e => {
-    e.preventDefault();
-    const response = ajax("/enter", "POST", enterInputs);
-    response.onload = () => {
-      let text = JSON.parse(response.responseText);
-      if (text.status === "not found") document.getElementById("error-enter").innerText = text.text;else {
-        setData(text);
-        setPage("game");
-      }
-    };
-  };
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    id: "main-enter"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    id: "decorations"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
-    src: "../images/clubs/k.png",
-    className: "card minus-30",
-    id: "card1"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
-    src: "../images/diamonds/a.png",
-    className: "card plus-30",
-    id: "card2"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
-    src: "../images/shirt.png",
-    className: "card minus-30",
-    id: "card3"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
-    src: "../images/hearts/10.png",
-    className: "card plus-30",
-    id: "card4"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
-    src: "../images/pig.png",
-    id: "pig",
-    onClick: () => document.getElementById('pigAudio').play(),
-    title: "Нажми на меня"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("audio", {
-    id: "pigAudio"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("source", {
-    src: "../audio/pig_sound.mp3"
-  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "form enter-block"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("form", {
-    onSubmit: send
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", null, "\u0412\u0445\u043E\u0434"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    id: "inputs"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
-    type: "text",
-    className: "form-input",
-    placeholder: "Почта",
-    value: enterInputs.email,
-    onChange: e => setEnterInputs(prevState => ({
-      ...prevState,
-      email: e.target.value
-    })),
-    required: true
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
-    type: "password",
-    className: "form-input",
-    placeholder: "Пароль",
-    value: enterInputs.password,
-    onChange: e => setEnterInputs(prevState => ({
-      ...prevState,
-      password: e.target.value
-    })),
-    minLength: 6,
-    maxLength: 32,
-    required: true
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h5", {
-    id: "error-enter"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
-    type: "submit",
-    className: "submit enter",
-    value: "Войти"
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    id: "transition-button",
-    onClick: () => props.setFormType("reg")
-  }, "\u0417\u0430\u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0438\u0440\u043E\u0432\u0430\u0442\u044C\u0441\u044F")));
-}
-function RegForm(props) {
-  const [regInputs, setRegInputs] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
-    email: "",
-    name: "",
-    weight: "",
-    password: ""
-  });
-  const {
-    setData,
-    setPage
-  } = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_app__WEBPACK_IMPORTED_MODULE_1__.DataContext);
-  const send = e => {
-    e.preventDefault();
-    if (!(0,_startUtils__WEBPACK_IMPORTED_MODULE_2__.passwordEqual)(regInputs.password)) return;
-    const response = ajax("/registration", "POST", regInputs);
-    response.onload = () => {
-      let text = JSON.parse(response.responseText);
-      if (text.status === "account exists") document.getElementById("error-email").innerText = text.text;else {
-        setData(text);
-        setPage("game");
-      }
-    };
-  };
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    id: "main-reg"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    id: "decorations"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
-    src: "../images/spades/q.png",
-    className: "card minus-30",
-    id: "card1"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
-    src: "../images/diamonds/q.png",
-    className: "card plus-30",
-    id: "card2"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
-    src: "../images/shirt.png",
-    className: "card minus-30",
-    id: "card3"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
-    src: "../images/shirt.png",
-    className: "card plus-30",
-    id: "card4"
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "form registration-block"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("form", {
-    onSubmit: send
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", null, "\u0420\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u044F"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    id: "inputs"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h5", {
-    id: "error-email"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
-    type: "email",
-    className: "form-input",
-    placeholder: "Почта",
-    value: regInputs.email,
-    onChange: e => setRegInputs(prevState => ({
-      ...prevState,
-      email: e.target.value
-    })),
-    required: true
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
-    type: "text",
-    className: "form-input",
-    placeholder: "Имя",
-    maxLength: 16,
-    value: regInputs.name,
-    onChange: e => setRegInputs(prevState => ({
-      ...prevState,
-      name: e.target.value
-    })),
-    required: true
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
-    type: "number",
-    className: "form-input number",
-    placeholder: "Вес",
-    min: 15,
-    max: "999",
-    value: regInputs.weight,
-    onChange: e => setRegInputs(prevState => ({
-      ...prevState,
-      weight: e.target.value
-    })),
-    required: true
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
-    id: "pass",
-    type: "password",
-    className: "form-input",
-    placeholder: "Пароль",
-    minLength: 6,
-    maxLength: 32,
-    value: regInputs.password,
-    onChange: e => setRegInputs(prevState => ({
-      ...prevState,
-      password: e.target.value
-    })),
-    required: true
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h5", {
-    id: "error-passwords"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
-    id: "repass",
-    type: "password",
-    className: "form-input",
-    placeholder: "Повторите пароль",
-    minLength: 6,
-    maxLength: 32,
-    required: true
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
-    type: "submit",
-    className: "submit reg",
-    value: "Зарегистрироваться"
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    id: "transition-button",
-    style: {
-      margin: "-15px"
-    },
-    onClick: () => props.setFormType("enter")
-  }, "\u0412\u043E\u0439\u0442\u0438")));
-}
-function Forms() {
-  const [formType, setFormType] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("enter");
-  if (formType === "enter") return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(EnterForm, {
-    setFormType: setFormType
-  });else return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(RegForm, {
-    setFormType: setFormType
-  });
-}
-function ajax(action, method, data) {
-  let xhr = new XMLHttpRequest();
-  xhr.open('POST', action, true);
-  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  xhr.send('data=' + JSON.stringify(data));
-  return xhr;
-}
-function removeErrorText(e) {
-  if (!e.target.classList.contains("submit")) {
-    document.querySelectorAll("h5").forEach(e => e.innerText = "");
-  }
-}
-
-/***/ }),
-
-/***/ "./src/main/resources/static/js/start/start.js":
-/*!*****************************************************!*\
-  !*** ./src/main/resources/static/js/start/start.js ***!
-  \*****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Start: () => (/* binding */ Start)
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _forms__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./forms */ "./src/main/resources/static/js/start/forms.js");
-/* harmony import */ var _startUtils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./startUtils */ "./src/main/resources/static/js/start/startUtils.js");
-
-
-
-function Start() {
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    (0,_startUtils__WEBPACK_IMPORTED_MODULE_2__.backgroundChange)();
-  });
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    id: "main"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    id: "background"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    id: "lines"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "line up static"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "line bottom static"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "line up move"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "line bottom move"
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_forms__WEBPACK_IMPORTED_MODULE_1__.Forms, null));
-}
-
-/***/ }),
-
-/***/ "./src/main/resources/static/js/start/startUtils.js":
+/***/ "./src/main/resources/static/js/game/cardManager.js":
 /*!**********************************************************!*\
-  !*** ./src/main/resources/static/js/start/startUtils.js ***!
+  !*** ./src/main/resources/static/js/game/cardManager.js ***!
   \**********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   backgroundChange: () => (/* binding */ backgroundChange),
-/* harmony export */   passwordEqual: () => (/* binding */ passwordEqual)
+/* harmony export */   Card: () => (/* binding */ Card),
+/* harmony export */   ClickOnCardDeck: () => (/* binding */ ClickOnCardDeck),
+/* harmony export */   cardMouseMove: () => (/* binding */ cardMouseMove),
+/* harmony export */   removeCard: () => (/* binding */ removeCard)
 /* harmony export */ });
-function backgroundChange() {
-  let color = 1;
-  function changeBackground() {
-    let colors = ["yellow", "black", "blue", "green", "yellow"];
-    let back = document.getElementById("background");
-    let j = 0;
-    for (let i = 0; i <= 200; i++) {
-      setTimeout(() => {
-        if (i < 100) j++;
-        back.style.backgroundImage = `linear-gradient(to top, ${colors[color]} ${-100 + i}%, ${colors[color - 1]} ${j}%)`;
-      }, 20 * i);
-    }
-    setTimeout(() => {
-      color++;
-      if (color === colors.length) color = 1;
-    }, 4000);
-  }
-  function changeLines() {
-    let colors = ["pink", "red", "yellow", "black"];
-    let lines = document.querySelectorAll(".line.move");
-    lines.forEach(e => e.style.backgroundColor = colors[color - 1]);
-    for (let i = 0; i <= 100; i++) {
-      setTimeout(() => {
-        lines.forEach(e => e.style.width = `${i}vw`);
-      }, 40 * i);
-    }
-    setTimeout(() => {
-      document.querySelectorAll(".line.static").forEach(e => e.style.backgroundColor = colors[color - 1]);
-    }, 3999);
-  }
-  changeLines();
-  changeBackground();
-  setInterval(changeBackground, 7000);
-  setInterval(changeLines, 7000);
-  document.body.addEventListener("click", e => {
-    if (!e.target.classList.contains("submit")) {
-      document.querySelectorAll("h5").forEach(e => e.innerText = "");
-    }
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+
+function Card(props) {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
+    id: props.id,
+    className: "card",
+    style: {
+      top: props.top,
+      left: props.left,
+      display: props.display
+    },
+    src: `../../images/${props.image}.png`,
+    onClick: props.onClick,
+    onMouseEnter: props.onMouseEnter,
+    onMouseLeave: props.onMouseLeave
   });
 }
-function passwordEqual(pass) {
-  let equal = pass === document.getElementById("repass").value;
-  if (!equal) document.getElementById("error-passwords").innerText = "Пароли не совпадают!";
-  return equal;
+function ClickOnCardDeck(props) {
+  const [coordinates, setCoordinates] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
+    x: 0,
+    y: 0
+  });
+  const app = props.app;
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    const cardManager = event => {
+      setCoordinates({
+        x: event.pageX,
+        y: event.pageY
+      });
+    };
+    window.addEventListener('mousemove', cardManager);
+    return () => window.removeEventListener('mousemove', cardManager);
+  }, []);
+  if (app.state.clicked) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      id: "move-card",
+      style: {
+        top: `${coordinates.y}px`,
+        left: `${coordinates.x}px`
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(Card, {
+      id: "move",
+      image: app.state.clickedCard
+    }));
+  }
+}
+function removeCard(id) {
+  let element = document.getElementById(id);
+  element.parentElement.removeChild(element);
+}
+function addCardToDeck(id, imgName) {
+  let card = document.getElementById(id);
+  card.style.display = "";
+  card.src = `../../images/${imgName}.png`;
+  return card;
+}
+function cardMouseMove(el) {
+  el.target.style.left = el.target.pageX - 60 + 'px';
+  el.target.style.top = el.target.pageY - 90 + 'px';
+}
+
+/***/ }),
+
+/***/ "./src/main/resources/static/js/game/connection.js":
+/*!*********************************************************!*\
+  !*** ./src/main/resources/static/js/game/connection.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   send: () => (/* binding */ send)
+/* harmony export */ });
+let callbacks = 0;
+const stompClient = new StompJs.Client({
+  brokerURL: 'ws://localhost:8080/pig'
+});
+stompClient.onConnect = frame => {
+  console.log('Connected: ' + frame);
+  document.getElementById("start").disabled = false;
+};
+function send(object, destination, disposable, callback) {
+  if (stompClient.connected) {
+    stompClient.publish({
+      destination: "/app/" + destination,
+      body: JSON.stringify(object)
+    });
+    stompClient.subscribe("/players/game", message => {
+      callback(message.body);
+      callbacks++;
+      if (disposable) {
+        stompClient.unsubscribe(`sub-${callbacks - 1}`);
+      }
+    });
+  }
+}
+stompClient.activate();
+
+/***/ }),
+
+/***/ "./src/main/resources/static/js/game/distribution.js":
+/*!***********************************************************!*\
+  !*** ./src/main/resources/static/js/game/distribution.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   game: () => (/* binding */ game)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _cardManager__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./cardManager */ "./src/main/resources/static/js/game/cardManager.js");
+/* harmony import */ var react_dom_client__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-dom/client */ "./node_modules/react-dom/client.js");
+/* harmony import */ var _events__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./events */ "./src/main/resources/static/js/game/events.js");
+/* harmony import */ var _connection__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./connection */ "./src/main/resources/static/js/game/connection.js");
+
+
+
+
+
+class Game extends (react__WEBPACK_IMPORTED_MODULE_0___default().Component) {
+  constructor(props) {
+    super(props);
+    this.state = {
+      clicked: false,
+      clickedCard: null
+    };
+  }
+  createDeck() {
+    let cards = [];
+    let offset = 21;
+    for (let i = 0; i < 35; i++) {
+      cards.push( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
+        id: "card" + i,
+        image: "shirt",
+        top: "27vh",
+        left: `${offset}vw`,
+        onClick: el => (0,_events__WEBPACK_IMPORTED_MODULE_3__.click)(el, this),
+        onMouseEnter: el => (0,_events__WEBPACK_IMPORTED_MODULE_3__.mouseEnterOnCardDeck)(this, el),
+        onMouseLeave: el => (0,_events__WEBPACK_IMPORTED_MODULE_3__.mouseLeaveFromCardDeck)(this, el)
+      }));
+      offset = offset + 1.57;
+    }
+    return cards;
+  }
+  render() {
+    let deck = this.createDeck();
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      id: "main"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      id: "top"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
+      onClick: el => {
+        (0,_connection__WEBPACK_IMPORTED_MODULE_4__.send)({}, "close", true, () => {});
+        el.target.disabled = true;
+      }
+    }, "Stop"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
+      id: "1",
+      image: "shirt",
+      top: "12vh",
+      left: "50vw",
+      display: "none"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_3__.Frame, {
+      id: "frame1",
+      top: "12vh",
+      left: "50vw",
+      app: this,
+      onClick: frame => (0,_events__WEBPACK_IMPORTED_MODULE_3__.put)(this, frame)
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      id: "center"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
+      id: "2",
+      image: "shirt",
+      top: "27vh",
+      left: "5vw",
+      display: "none"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_3__.Frame, {
+      id: "frame2",
+      top: "27vh",
+      left: "5vw",
+      app: this,
+      onClick: frame => (0,_events__WEBPACK_IMPORTED_MODULE_3__.put)(this, frame)
+    }), deck.map(e => e), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
+      id: "3",
+      image: this.props.common,
+      top: "27vh",
+      left: "84vw"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_3__.Frame, {
+      id: "frame3",
+      top: "27vh",
+      left: "84vw",
+      app: this,
+      onClick: frame => (0,_events__WEBPACK_IMPORTED_MODULE_3__.put)(this, frame)
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      id: "bottom"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
+      id: "0",
+      image: "shirt",
+      top: "10vh",
+      left: "50vw",
+      display: "none",
+      onClick: () => (0,_events__WEBPACK_IMPORTED_MODULE_3__.take)(this)
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_3__.Frame, {
+      id: "frame0",
+      top: "10vh",
+      left: "50vw",
+      app: this,
+      onClick: frame => (0,_events__WEBPACK_IMPORTED_MODULE_3__.put)(this, frame)
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.ClickOnCardDeck, {
+      app: this
+    }));
+  }
+}
+function game() {
+  const root = (0,react_dom_client__WEBPACK_IMPORTED_MODULE_2__.createRoot)(document.getElementById("root"));
+  const start = () => {
+    (0,_connection__WEBPACK_IMPORTED_MODULE_4__.send)({
+      number: 12
+    }, "connect", true, () => {
+      (0,_connection__WEBPACK_IMPORTED_MODULE_4__.send)({}, "start", true, message => {
+        root.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(Game, {
+          common: message
+        }));
+      });
+    });
+  };
+  root.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
+    id: "start",
+    onClick: start
+  }, "Start"));
+}
+game();
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Game);
+
+/***/ }),
+
+/***/ "./src/main/resources/static/js/game/events.js":
+/*!*****************************************************!*\
+  !*** ./src/main/resources/static/js/game/events.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Frame: () => (/* binding */ Frame),
+/* harmony export */   click: () => (/* binding */ click),
+/* harmony export */   mouseEnterOnCardDeck: () => (/* binding */ mouseEnterOnCardDeck),
+/* harmony export */   mouseLeaveFromCardDeck: () => (/* binding */ mouseLeaveFromCardDeck),
+/* harmony export */   put: () => (/* binding */ put),
+/* harmony export */   take: () => (/* binding */ take)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _cardManager__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./cardManager */ "./src/main/resources/static/js/game/cardManager.js");
+/* harmony import */ var _connection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./connection */ "./src/main/resources/static/js/game/connection.js");
+
+
+
+function mouseEnterOnCardDeck(app, el) {
+  if (!app.state.clicked) {
+    el.target.style.border = "2px solid blue";
+    el.target.style.top = "26vh";
+    el.target.style.cursor = "pointer";
+  }
+}
+function mouseLeaveFromCardDeck(app, el) {
+  if (!app.state.clicked) {
+    el.target.style.border = "1px solid black";
+    el.target.style.top = "27vh";
+    el.target.style.cursor = "default";
+  }
+}
+function click(cardId, app) {
+  if (!app.state.clicked) {
+    let id = cardId.target.id;
+    (0,_connection__WEBPACK_IMPORTED_MODULE_2__.send)({
+      "number": id.substring(4)
+    }, "click", true, card => {
+      (0,_cardManager__WEBPACK_IMPORTED_MODULE_1__.removeCard)(cardId.target.id);
+      app.setState({
+        clicked: true,
+        clickedCard: card
+      });
+    });
+  }
+}
+function Frame(props) {
+  if (props.app.state.clicked) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      id: props.id,
+      className: "card frame",
+      style: {
+        top: String(props.top),
+        left: String(props.left)
+      },
+      onClick: props.onClick
+    });
+  }
+}
+function put(app, frame) {
+  if (app.state.clicked) {
+    app.setState({
+      clicked: false
+    });
+    let id = frame.target.id.substring(5);
+    (0,_connection__WEBPACK_IMPORTED_MODULE_2__.send)({
+      "number": id,
+      "data": app.state.clickedCard
+    }, "put", true, () => {
+      let playerCard = document.getElementById(id);
+      playerCard.style.display = "";
+      playerCard.src = `../../images/${app.state.clickedCard}.png`;
+    });
+  }
+}
+function take(app) {
+  if (!app.state.clicked) {
+    (0,_connection__WEBPACK_IMPORTED_MODULE_2__.send)({}, "take", true, msg => {
+      let takenCard = msg.split(" ")[0];
+      let subCard = msg.split(" ")[1];
+      app.setState({
+        clicked: true,
+        clickedCard: takenCard
+      });
+      if (subCard === "none") {
+        document.getElementById("0").style.display = "none";
+      } else {
+        document.getElementById("0").src = `../../images/${subCard}.png`;
+      }
+    });
+  }
 }
 
 /***/ }),
@@ -33874,13 +33808,12 @@ if (false) {} else {
 /******/ 	
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
+/******/ 	__webpack_require__("./src/main/resources/static/js/game/distribution.js");
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	__webpack_require__("./src/main/resources/static/js/start/forms.js");
-/******/ 	__webpack_require__("./src/main/resources/static/js/start/start.js");
-/******/ 	__webpack_require__("./src/main/resources/static/js/start/example.js");
-/******/ 	__webpack_require__("./src/main/resources/static/js/start/startUtils.js");
-/******/ 	var __webpack_exports__ = __webpack_require__("./src/main/resources/static/js/app.js");
+/******/ 	__webpack_require__("./src/main/resources/static/js/game/cardManager.js");
+/******/ 	__webpack_require__("./src/main/resources/static/js/game/events.js");
+/******/ 	var __webpack_exports__ = __webpack_require__("./src/main/resources/static/js/game/connection.js");
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=app.js.map
+//# sourceMappingURL=game.js.map

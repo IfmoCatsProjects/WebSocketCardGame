@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from "react";
-import Card, {cardMouseMove, removeCard} from "./cardManager";
+import React from "react";
+import {removeCard} from "./cardManager";
+import {send} from "./connection";
 
 export function mouseEnterOnCardDeck(app, el) {
     if (!app.state.clicked) {

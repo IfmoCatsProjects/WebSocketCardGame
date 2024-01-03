@@ -7,8 +7,6 @@ function EnterForm(props) {
         email: "",
         password: ""
     })
-    const {setData, setPage} = useContext(DataContext)
-
     const send = (e) => {
         e.preventDefault()
         const response = ajax("/enter", "POST", enterInputs)
@@ -16,10 +14,8 @@ function EnterForm(props) {
             let text = JSON.parse(response.responseText)
             if(text.status === "not found")
                 document.getElementById("error-enter").innerText = text.text
-            else {
-                setData(text)
-                setPage("game")
-            }
+            else
+                window.location.pathname = "/"
         }
     }
 

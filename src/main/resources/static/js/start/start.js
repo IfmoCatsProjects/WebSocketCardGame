@@ -5,7 +5,6 @@ import {backgroundChange} from "./startUtils";
 export function Start() {
     useEffect(() => {
         backgroundChange()
-
     })
 
     return (<div id={"main"}>

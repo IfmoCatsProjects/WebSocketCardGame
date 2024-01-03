@@ -2,6 +2,7 @@ import React from "react";
 import {Card, ClickOnCardDeck} from "./cardManager";
 import {createRoot} from "react-dom/client";
 import {mouseEnterOnCardDeck, mouseLeaveFromCardDeck, click, Frame, put, take} from "./events";
+import {send} from "./connection";
 
 class Game extends React.Component {
     constructor(props) {

@@ -18,7 +18,7 @@ public class GameController {
 
     @Autowired
     private SimpMessagingTemplate template;
-    private final Database database = null;
+    private final Database database = new Database();
 
     @MessageMapping("/connect")
     public void connect(SimpMessageHeaderAccessor sha, Request request) {

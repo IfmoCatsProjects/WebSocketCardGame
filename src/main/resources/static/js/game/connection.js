@@ -7,7 +7,7 @@ stompClient.onConnect = (frame) => {
     document.getElementById("start").disabled = false
 };
 
-function send(object, destination, disposable, callback ) {
+export function send(object, destination, disposable, callback ) {
     if (stompClient.connected) {
         stompClient.publish({
             destination: "/app/" + destination,
