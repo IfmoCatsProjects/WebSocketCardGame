@@ -63,6 +63,7 @@ body {
     font-size: 18px;
 }
 
+
 .submit:hover {
     border: 1px solid red;
 }
@@ -74,6 +75,7 @@ body {
 .reg {
     height: 40px;
     width: 200px;
+    bottom: 25px;
 }
 .line {
     position: absolute;
@@ -159,4 +161,14 @@ h5 {
 #error-enter {
     top: 23vh;
     left: 4vw;
+}
+
+#transition-button {
+    text-decoration: underline;
+    color: blue;
+}
+
+#transition-button:hover {
+    color: peru;
+    cursor: pointer;
 }

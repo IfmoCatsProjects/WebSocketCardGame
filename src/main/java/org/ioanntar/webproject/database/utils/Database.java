@@ -3,7 +3,6 @@ package org.ioanntar.webproject.database.utils;
 import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.criteria.JpaCriteriaQuery;
 
 import java.util.List;
 

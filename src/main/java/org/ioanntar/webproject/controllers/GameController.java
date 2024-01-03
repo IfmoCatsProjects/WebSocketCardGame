@@ -1,8 +1,10 @@
-package org.ioanntar.webproject.modules;
+package org.ioanntar.webproject.controllers;
 
 import org.ioanntar.webproject.database.entities.*;
 import org.ioanntar.webproject.database.utils.Database;
 import org.ioanntar.webproject.logic.GenerateDeck;
+import org.ioanntar.webproject.modules.Request;
+import org.ioanntar.webproject.modules.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -16,7 +18,7 @@ public class GameController {
 
     @Autowired
     private SimpMessagingTemplate template;
-    private final Database database = new Database();
+    private final Database database = null;
 
     @MessageMapping("/connect")
     public void connect(SimpMessageHeaderAccessor sha, Request request) {
@@ -34,15 +36,6 @@ public class GameController {
 
     @MessageMapping("/start")
     public void start(SimpMessageHeaderAccessor sha) {
-//        Game game1 = database.get(Game.class, 22);//TODO временная очистка всех игр
-//        try {
-//            game1.getGameDecks().clear();
-//            for (Player player: game1.getPlayers()) {
-//                player.getPlayersDeck().clear();
-//            }
-//        } catch (NullPointerException ignored) {}
-//        database.commit();
-
         long id = (long) sha.getSessionAttributes().get("gameId");
         Game game = database.get(Game.class, id);
 

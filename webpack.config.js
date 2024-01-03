@@ -2,20 +2,22 @@ const path = require("path");
 module.exports = {
     watch: true,
     devtool: "source-map",
-    entry: {
-        distribution: [
-            './src/main/resources/static/js/game/distribution.js'
-        ],
-        cardManager: [
-            './src/main/resources/static/js/game/cardManager.js'
-        ],
-        events: [
-            './src/main/resources/static/js/game/events.js'
-        ]
-    },
+    entry: [
+        './src/main/resources/static/js/start/forms.js',
+        './src/main/resources/static/js/start/start.js',
+        './src/main/resources/static/js/start/example.js',
+        './src/main/resources/static/js/start/startUtils.js',
+
+        // './src/main/resources/static/js/game/distribution.js',
+        // './src/main/resources/static/js/game/cardManager.js',
+        // './src/main/resources/static/js/game/events.js',
+        // './src/main/resources/static/js/game/connection.js',
+
+        './src/main/resources/static/js/app.js',
+    ],
     output: {
         path: path.resolve(__dirname, 'src/main/resources/static/js/dist'),
-        filename: "[name].js"
+        filename: "app.js"
     },
     module: {
         rules: [{

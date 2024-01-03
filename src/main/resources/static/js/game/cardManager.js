@@ -21,13 +21,9 @@ export function ClickOnCardDeck(props) {
         };
         window.addEventListener('mousemove', cardManager);
 
-        return () => {
-            window.removeEventListener(
-                'mousemove',
-                cardManager,
-            );
-        };
-    }, []);
+        return () => window.removeEventListener('mousemove', cardManager,)
+    }, [])
+
     if (app.state.clicked) {
         return (
             <div id={"move-card"} style={{top: `${coordinates.y}px`, left: `${coordinates.x}px`}}>

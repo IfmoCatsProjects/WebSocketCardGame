@@ -3,14 +3,12 @@ import {Card, ClickOnCardDeck} from "./cardManager";
 import {createRoot} from "react-dom/client";
 import {mouseEnterOnCardDeck, mouseLeaveFromCardDeck, click, Frame, put, take} from "./events";
 
-class App extends React.Component {
+class Game extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             clicked: false,
             clickedCard: null,
-            cursorX: 0,
-            cursorY: 0
         }
     }
     createDeck() {
@@ -54,10 +52,17 @@ class App extends React.Component {
     }
 
 }
-document.getElementById("start").addEventListener("click", () => {
-    send({number: 12}, "connect", true, () => {
-        send({}, "start", true, (message) => {
-            createRoot(document.getElementById("root")).render(<App common={message}/>)
+export function game() {
+    const root = createRoot(document.getElementById("root"))
+    const start = () => {
+        send({number: 12}, "connect", true, () => {
+            send({}, "start", true, (message) => {
+                root.render(<Game common={message}/>)
+            })
         })
-    })
-})
+    }
+    root.render(<button id={"start"} onClick={start}>Start</button>)
+}
+game()
+
+export default Game
