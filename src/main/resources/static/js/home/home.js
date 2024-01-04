@@ -29,7 +29,7 @@ function Home() {
             <h1 id={"weight"}>Вес: 999 кг <BiPencil size={25}/></h1>
             <div id={"rating"}>
                 <img className={"cup"} src={"../images/cup.png"}/>
-                <h1 id={"rating-text"}>Рейтинг: 2147483647</h1>
+                <h1>Рейтинг: 2147483647</h1>
                 <img className={"cup"} src={"../images/cup.png"}/>
             </div>
         </header>
