@@ -1,6 +1,7 @@
 import React, {useEffect} from "react";
 import {Forms} from "./forms";
 import {backgroundChange} from "./startUtils";
+import {createRoot} from "react-dom/client";
 
 export function Start() {
     useEffect(() => {
@@ -18,3 +19,5 @@ export function Start() {
         <Forms />
     </div>)
 }
+
+createRoot(document.getElementById("root")).render(<Start />)

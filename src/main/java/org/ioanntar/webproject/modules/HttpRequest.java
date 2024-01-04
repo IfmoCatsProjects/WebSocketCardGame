@@ -1,6 +1,8 @@
 package org.ioanntar.webproject.modules;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.ioanntar.webproject.database.entities.Player;
 import org.ioanntar.webproject.database.utils.Database;
 import org.ioanntar.webproject.utils.PasswordHash;
@@ -8,17 +10,20 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+@NoArgsConstructor
 public class HttpRequest {
-    private final JSONObject object;
+    private JSONObject object;
     private Database database = new Database();
 
     public HttpRequest(JSONObject object) {
         this.object = object;
     }
 
-    private JSONObject getClientData(Player player) {
+    public JSONObject getClientData(long id) {
+        Player player = database.get(Player.class, id);
+
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("status", "ok");
+        jsonObject.put("email", player.getEmail());
         jsonObject.put("name", player.getName());
         jsonObject.put("rating", player.getRating());
         jsonObject.put("weight", player.getWeight());
@@ -34,15 +39,16 @@ public class HttpRequest {
         Player player = players.stream().filter(p -> p.getEmail().equals(email)).findFirst().orElse(null);
         boolean pass = player != null & players.stream().anyMatch(p -> p.getPassword().equals(sha));
 
+        JSONObject jsonObject = new JSONObject();
         if(player == null || !pass) {
-            JSONObject jsonObject = new JSONObject();
             jsonObject.put("status", "not found");
             jsonObject.put("text", "Неверный логин или пароль!");
             return jsonObject.toString();
         }
 
         session.setAttribute("id", player.getId());
-        return getClientData(player).toString();
+        jsonObject.put("status", "ok");
+        return jsonObject.toString();
     }
 
     public String regClient(HttpSession session) {
@@ -50,8 +56,8 @@ public class HttpRequest {
         String email = object.getString("email");
 
         List<Player> players = database.getAll(Player.class);
+        JSONObject jsonObject = new JSONObject();
         if(players.stream().anyMatch(p -> p.getEmail().equals(email))) {
-            JSONObject jsonObject = new JSONObject();
             jsonObject.put("status", "account exists");
             jsonObject.put("text", "Аккаунт с такой почтой уже есть!");
             return jsonObject.toString();
@@ -61,6 +67,7 @@ public class HttpRequest {
         database.commit();
 
         session.setAttribute("id", player.getId());
-        return getClientData(player).toString();
+        jsonObject.put("status", "ok");
+        return jsonObject.toString();
     }
 }

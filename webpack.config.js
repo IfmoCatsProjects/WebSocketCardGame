@@ -6,14 +6,18 @@ module.exports = {
         start: [
             './src/main/resources/static/js/start/forms.js',
             './src/main/resources/static/js/start/start.js',
-            './src/main/resources/static/js/start/example.js',
             './src/main/resources/static/js/start/startUtils.js',
+            './src/main/resources/static/js/utils/requests.js'
         ],
         game: [
             './src/main/resources/static/js/game/distribution.js',
             './src/main/resources/static/js/game/cardManager.js',
             './src/main/resources/static/js/game/events.js',
             './src/main/resources/static/js/game/connection.js',
+        ],
+        home: [
+            './src/main/resources/static/js/home/home.js',
+            './src/main/resources/static/js/utils/requests.js'
         ]
     },
     output: {

@@ -1,6 +1,6 @@
-import React, {useContext, useEffect, useState} from "react";
-import {DataContext} from "../app";
+import React, {useState} from "react";
 import {passwordEqual} from "./startUtils";
+import {ajax} from "../utils/requests";
 
 function EnterForm(props) {
     const [enterInputs, setEnterInputs] = useState({
@@ -61,7 +61,6 @@ function RegForm(props) {
         weight: "",
         password: ""
     })
-    const {setData, setPage} = useContext(DataContext)
 
     const send = (e) => {
         e.preventDefault()
@@ -73,10 +72,8 @@ function RegForm(props) {
             let text = JSON.parse(response.responseText)
             if(text.status === "account exists")
                 document.getElementById("error-email").innerText = text.text
-            else {
-                setData(text)
-                setPage("game")
-            }
+            else
+                window.location.pathname = "/"
         }
     }
     return (<div id={"main-reg"}>
@@ -91,7 +88,7 @@ function RegForm(props) {
                 <h1>Регистрация</h1>
                 <div id={"inputs"}>
                     <h5 id={"error-email"}></h5>
-                    <input type={"email"} className={"form-input"} placeholder={"Почта"} value={regInputs.email}
+                    <input type={"email"} className={"form-input"} placeholder={"Почта"} value={regInputs.email} maxLength={64}
                            onChange={e => setRegInputs(prevState => ({...prevState, email: e.target.value}))} required/>
 
                     <input type={"text"} className={"form-input"} placeholder={"Имя"} maxLength={16} value={regInputs.name}
@@ -120,20 +117,4 @@ export function Forms() {
         return <EnterForm setFormType={setFormType}/>
     else
         return <RegForm setFormType={setFormType}/>
-}
-
-function ajax(action, method, data) {
-    let xhr = new XMLHttpRequest;
-
-    xhr.open('POST', action, true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-    xhr.send('data=' + JSON.stringify(data));
-    return xhr
-}
-
-function removeErrorText(e) {
-    if (!e.target.classList.contains("submit")) {
-        document.querySelectorAll("h5").forEach(e => e.innerText = "")
-    }
 }

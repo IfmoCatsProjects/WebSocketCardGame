@@ -22,4 +22,11 @@ public class MainController {
         HttpRequest request = new HttpRequest(new JSONObject(data));
         return request.clientEnter(session);
     }
+
+    @GetMapping("get_client")
+    public String getClient(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+
+        return new HttpRequest().getClientData((long) session.getAttribute("id")).toString();
+    }
 }

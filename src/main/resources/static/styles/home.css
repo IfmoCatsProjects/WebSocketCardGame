@@ -1,0 +1,86 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 500px;
+    background-color: #f1f1f1;
+    padding: 20px;
+}
+.child {
+    background-color: #cccccc;
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    margin: 5px;
+}
+
+.centered {
+    text-align: center;
+}
+
+.centered .child {
+    margin: 0 auto;
+}
+
+
+.ellips {
+    width: 100px;
+    white-space: nowrap; /* Запрещаем перенос строк */
+    overflow: hidden; /* Обрезаем все, что не помещается в область */
+    text-overflow: ellipsis; /* Добавляем многоточие */
+}
+
+header {
+    width: 100vw;
+    height: 13vh;
+    background-color: black;
+    display: flex;
+    color: white;
+}
+
+#profile {
+    margin: 22px;
+    height: 60px;
+    width: 60px;
+    padding-bottom: 0;
+}
+
+#name-email {
+    /*padding: -10px;*/
+}
+
+#name {
+    margin-bottom: 0;
+}
+
+#email {
+    margin-top: 10px;
+    width: 21vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#weight {
+    margin-left: 30px;
+    white-space: pre-wrap;
+}
+
+#rating {
+    display: flex;
+    padding-left: 40px;
+}
+
+.cup {
+    padding-right: 10px;
+    padding-left: 10px;
+    margin-top: 20px;
+    width: 40px;
+    height: 50px;
+}
+
+#rating-text {
+    pa
+}

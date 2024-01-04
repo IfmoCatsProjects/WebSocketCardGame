@@ -12,12 +12,19 @@ public class IndexController {
     public String start(HttpServletRequest request) {
         HttpSession session = request.getSession();
         if (session.getAttribute("id") != null)
-            return "redirect:/templates/game.html";
+            return "redirect:/templates/home.html";
         return "redirect:/templates/index.html";
+    }
+
+    //TODO впоследствии уберу
+
+    @GetMapping("/home")
+    public String home() {
+        return "redirect:/templates/home.html";
     }
 
     @GetMapping("/game")
     public String game() {
         return "redirect:/templates/game.html";
-    } //TODO впоследствии уберу, так как делаю SPA
+    }
 }
