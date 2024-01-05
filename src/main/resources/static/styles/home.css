@@ -1,35 +1,9 @@
+
 body {
+    background: url("../images/home_background.jpg") no-repeat fixed;
+    background-size: cover;
     margin: 0;
     padding: 0;
-}
-
-.container {
-    width: 500px;
-    background-color: #f1f1f1;
-    padding: 20px;
-}
-.child {
-    background-color: #cccccc;
-    display: inline-block;
-    width: 100px;
-    height: 100px;
-    margin: 5px;
-}
-
-.centered {
-    text-align: center;
-}
-
-.centered .child {
-    margin: 0 auto;
-}
-
-
-.ellips {
-    width: 100px;
-    white-space: nowrap; /* Запрещаем перенос строк */
-    overflow: hidden; /* Обрезаем все, что не помещается в область */
-    text-overflow: ellipsis; /* Добавляем многоточие */
 }
 
 header {
@@ -47,8 +21,30 @@ header {
     padding-bottom: 0;
 }
 
-#name-email {
-    /*padding: -10px;*/
+#profile:hover {
+    border: 2px solid lime;
+    box-sizing: border-box;
+}
+
+#exit {
+    position: absolute;
+    height: 6%;
+    width: 10%;
+    top: 13%;
+    background-color: black;
+    border-top: 1px solid blue;
+    font-size: 28px;
+    text-align: center;
+    font-weight: bold;
+}
+
+#exit-text:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#name-weight {
+    display: flex;
 }
 
 #name {
@@ -56,7 +52,7 @@ header {
 }
 
 #email {
-    margin-top: 10px;
+    margin-top: -10px;
     width: 21vw;
     white-space: nowrap;
     overflow: hidden;
@@ -69,8 +65,10 @@ header {
 }
 
 #rating {
+    position: absolute;
     display: flex;
-    padding-left: 40px;
+    left: 55%;
+    transform: translateX(-50%);
 }
 
 .cup {
@@ -79,4 +77,133 @@ header {
     margin-top: 20px;
     width: 40px;
     height: 50px;
+}
+
+#main-part {
+    display: flex;
+}
+
+#menu {
+    width: 30vw;
+    height: 82vh;
+}
+
+#frame {
+    position: relative;
+    height: 450px;
+    width: 350px;
+    margin-top: 7vh;
+    margin-left: 3vw;
+}
+
+#img-frame {
+    position: absolute;
+    height: 450px;
+    width: 350px;
+    pointer-events: none;
+}
+
+#menu-buttons {
+    height: 450px;
+    width: 350px;
+    position: absolute;
+    padding-left: 50%;
+    padding-top: 31%;
+}
+
+.menu-button {
+    font-weight: bold;
+    border-radius: 5px;
+    box-shadow: 0 4px 16px black;
+    transform: translateX(-50%);
+    margin-bottom: 30px;
+}
+
+.menu-button:hover {
+    background-color: #FFF842;
+    color: #ff0000;
+    font-weight: bold;
+
+    box-shadow: #000000 -5px 5px;
+    transform: translate3d(-70px, 0px, 0);
+
+    transition: all, 0.4s;
+}
+
+.create-game {
+    top: 25%;
+    height: 50px;
+    width: 200px;
+    font-size: 1.5em;
+    background-color: #9a4087;
+    color: white;
+}
+
+.join-game {
+    top: 43%;
+    height: 50px;
+    width: 200px;
+    font-size: 1.4em;
+    background-color: #908c02;
+    color: white;
+}
+
+.my-rating {
+    top: 61%;
+    height: 50px;
+    width: 200px;
+    font-size: 1.5em;
+    background-color: #31ada8;
+    color: white;
+}
+
+#table {
+    width: 68vh;
+    height: 82vh;
+    padding-left: 20vw;
+    padding-top: 5vh;
+}
+
+.rating-table th {
+    font-weight: bold;
+    font-size: 1em;
+    text-align: center;
+    color: white;
+    background-color: #324432;
+}
+
+.rating-table td {
+    font-weight: normal;
+    font-size: 1em;
+    box-shadow: 0 2px 2px -2px #0E1119;
+}
+
+.rating-table {
+    transform: translateX(-50%);
+    padding: 0;
+    text-align: center;
+    overflow: hidden;
+}
+
+.rating-table td, .rating-table th {
+    padding-bottom: 2%;
+    padding-top: 2%;
+}
+
+.rating-table tr:nth-child(odd) {
+    background-color: #323C50;
+}
+
+.rating-table tr:nth-child(even) {
+    background-color: #2C3446;
+}
+
+.rating-table td {
+    color: #07f1ce;
+}
+
+.rating-table tr:hover {
+    background-color: #4778ec;
+    box-shadow: 0 6px 6px -6px #0E1119;;
+    color: white;
 }

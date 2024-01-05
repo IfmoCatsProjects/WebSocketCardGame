@@ -17,6 +17,8 @@ module.exports = {
         ],
         home: [
             './src/main/resources/static/js/home/home.js',
+            './src/main/resources/static/js/home/header.js',
+            './src/main/resources/static/js/home/table.js',
             './src/main/resources/static/js/utils/requests.js'
         ]
     },

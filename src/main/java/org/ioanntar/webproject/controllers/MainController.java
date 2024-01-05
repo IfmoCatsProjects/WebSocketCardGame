@@ -29,4 +29,10 @@ public class MainController {
 
         return new HttpRequest().getClientData((long) session.getAttribute("id")).toString();
     }
+
+    @GetMapping("exit")
+    public void exit(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        session.removeAttribute("id");
+    }
 }
