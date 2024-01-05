@@ -4,6 +4,7 @@ import {createRoot} from "react-dom/client";
 import {BiPencil} from "react-icons/bi";
 import {Header} from "./header";
 import {Table} from "./table";
+import {GameRoom} from "./gameRoom";
 
 function Home() {
     const [data, setData] = useState({
@@ -12,6 +13,7 @@ function Home() {
         weight: 0,
         rating: 0
     })
+    const [gameType, setGameType] = useState("none")
 
     return (<div id={"main"}>
             <Header data={data} setData={setData}/>
@@ -20,8 +22,8 @@ function Home() {
                 <div id={"frame"}>
                     <img id={"img-frame"} src={"../images/frame.png"}/>
                     <div id={"menu-buttons"}>
-                        <button className={"menu-button create-game"}>Создать игру</button>
-                        <button className={"menu-button join-game"}>Присоединиться</button>
+                        <button className={"menu-button create-game"} onClick={() => setGameType("create")}>Создать игру</button>
+                        <button className={"menu-button join-game"} onClick={() => setGameType("join")}>Присоединиться</button>
                         <button className={"menu-button my-rating"}>Мой рейтинг</button>
                     </div>
                 </div>
@@ -30,7 +32,7 @@ function Home() {
                 <Table />
             </div>
         </div>
-
+        {gameType !== "none" ? <GameRoom gameType={gameType} setGameType={setGameType}/> : ""}
     </div>)
 }
 

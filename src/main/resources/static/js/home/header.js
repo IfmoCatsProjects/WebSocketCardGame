@@ -14,12 +14,12 @@ export function Header({data, setData}) {
     }
 
     useEffect(() => {
-        const response = ajax("/get_client", "GET", {})
-        response.onload = () => {
-            let text = JSON.parse(response.responseText)
-            setData({name: text.name, email: text.email, rating: text.rating, weight: text.weight})
-            console.log(data)
-        }
+        // const response = ajax("/get_client", "GET", {})
+        // response.onload = () => {
+        //     let text = JSON.parse(response.responseText)
+        //     setData({name: text.name, email: text.email, rating: text.rating, weight: text.weight})
+        //     console.log(data)
+        // }
 
         document.body.addEventListener("click", (e) => {
             if (e.target.id !== "exit" && e.target.id !== "profile") {

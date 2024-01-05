@@ -19,7 +19,8 @@ module.exports = {
             './src/main/resources/static/js/home/home.js',
             './src/main/resources/static/js/home/header.js',
             './src/main/resources/static/js/home/table.js',
-            './src/main/resources/static/js/utils/requests.js'
+            './src/main/resources/static/js/home/gameRoom.js',
+            './src/main/resources/static/js/utils/requests.js',
         ]
     },
     output: {
