@@ -218,7 +218,7 @@ header {
     opacity: 0.7;
 }
 
-#create-window {
+#game-window {
     width: 300px;
     height: 200px;
     position: absolute;
@@ -227,6 +227,7 @@ header {
     background-color: white;
     transform: translateX(-50%) translateY(-50%);
     border-radius: 20px;
+    text-align: center;
 }
 
 #close {
@@ -283,9 +284,9 @@ header {
 
 #create-button {
     transform: translateX(-50%);
-    margin-left: 50%;
+    margin-left: 35%;
     width: 35%;
-    height: 20%;
+    height: 40px;
     border-radius: 10px;
     background: linear-gradient(to left, purple 40%, darkblue 75%);
     color: white;
@@ -295,4 +296,25 @@ header {
 #create-button:hover {
     transform: scale(1.1) translateX(-45%);
     cursor: pointer;
+}
+
+#find-game {
+    transform: translateX(-50%);
+    margin-left: 50%;
+    outline: none;
+    text-align: center;
+    height: 25px;
+    font-size: 1.1em;
+    margin-bottom: 20px;
+}
+
+#join-button {
+    transform: translateX(-50%);
+    margin-left: 50%;
+    width: 55%;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(to left, purple 40%, darkblue 75%);
+    color: white;
+    font-size: 1.2em;
 }

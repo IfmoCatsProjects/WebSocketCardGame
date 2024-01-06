@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from "react";
-import {ajax} from "../utils/requests";
+import React, {createContext, useState} from "react";
 import {createRoot} from "react-dom/client";
-import {BiPencil} from "react-icons/bi";
 import {Header} from "./header";
 import {Table} from "./table";
 import {GameRoom} from "./gameRoom";
+
+export const GameTypeContext = createContext(null)
 
 function Home() {
     const [data, setData] = useState({
@@ -32,7 +32,10 @@ function Home() {
                 <Table />
             </div>
         </div>
-        {gameType !== "none" ? <GameRoom gameType={gameType} setGameType={setGameType}/> : ""}
+        {gameType !== "none" ?
+            <GameTypeContext.Provider value={gameType}>
+                <GameRoom setGameType={setGameType}/>
+            </GameTypeContext.Provider> : ""}
     </div>)
 }
 
