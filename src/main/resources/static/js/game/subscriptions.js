@@ -24,5 +24,5 @@ export class MoveSubscriptions {
             else
                 document.getElementById("0").src = `../../images/${text["subCard"]}.png`
         })
-    }
+    } 
 }
