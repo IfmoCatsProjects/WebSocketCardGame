@@ -2,6 +2,7 @@ package org.ioanntar.webproject.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.ioanntar.webproject.logic.GameManager;
 import org.ioanntar.webproject.modules.HttpRequest;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
@@ -23,16 +24,24 @@ public class MainController {
         return request.clientEnter(session);
     }
 
-    @GetMapping("get_client")
+    @GetMapping("/get_client")
     public String getClient(HttpServletRequest request) {
         HttpSession session = request.getSession();
 
-        return new HttpRequest().getClientData((long) session.getAttribute("id")).toString();
+        return new HttpRequest().getClientData((long) session.getAttribute("playerId")).toString();
     }
 
-    @GetMapping("exit")
+    @GetMapping("/exit")
     public void exit(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        session.removeAttribute("id");
+        session.removeAttribute("playerId");
+    }
+
+    @PostMapping("/createGame")
+    public String createGame(@RequestParam String data, HttpServletRequest request) {
+        JSONObject object = new JSONObject(data);
+        int count = object.getInt("count");
+        new GameManager().create(request.getSession(), count);
+        return null;
     }
 }

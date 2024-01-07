@@ -14,8 +14,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react_icons_io__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-icons/io */ "./node_modules/react-icons/io/index.esm.js");
+/* harmony import */ var react_icons_io__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-icons/io */ "./node_modules/react-icons/io/index.esm.js");
 /* harmony import */ var _home__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./home */ "./src/main/resources/static/js/home/home.js");
+/* harmony import */ var _utils_requests__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/requests */ "./src/main/resources/static/js/utils/requests.js");
+
 
 
 
@@ -31,7 +33,7 @@ function GameRoom({
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     id: "close",
     onClick: () => setGameType("none")
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(react_icons_io__WEBPACK_IMPORTED_MODULE_2__.IoIosCloseCircleOutline, {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(react_icons_io__WEBPACK_IMPORTED_MODULE_3__.IoIosCloseCircleOutline, {
     size: 25,
     color: "red"
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(GameType, null)));
@@ -51,6 +53,12 @@ function GameType() {
       document.querySelector(".two-players").classList.remove("selected");
     }
   };
+  const createGame = () => {
+    const response = (0,_utils_requests__WEBPACK_IMPORTED_MODULE_2__.ajax)("/createGame", "POST", {
+      count: playersCount
+    });
+    response.onload = () => window.location.pathname = "/";
+  };
   if (gameType === "create") {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       onClick: e => changeCount(e),
@@ -60,7 +68,8 @@ function GameType() {
     }, "2 \u0438\u0433\u0440\u043E\u043A\u0430"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       className: "player-count-selector three-players"
     }, "3 \u0438\u0433\u0440\u043E\u043A\u0430")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
-      id: "create-button"
+      id: "create-button",
+      onClick: createGame
     }, "\u0421\u043E\u0437\u0434\u0430\u0442\u044C"));
   } else if (gameType === "join") {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", null, "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 id \u0438\u0433\u0440\u044B"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("input", {
@@ -107,13 +116,16 @@ function Header({
     };
   };
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    // const response = ajax("/get_client", "GET", {})
-    // response.onload = () => {
-    //     let text = JSON.parse(response.responseText)
-    //     setData({name: text.name, email: text.email, rating: text.rating, weight: text.weight})
-    //     console.log(data)
-    // }
-
+    const response = (0,_utils_requests__WEBPACK_IMPORTED_MODULE_1__.ajax)("/get_client", "GET", {});
+    response.onload = () => {
+      let text = JSON.parse(response.responseText);
+      setData({
+        name: text.name,
+        email: text.email,
+        rating: text.rating,
+        weight: text.weight
+      });
+    };
     document.body.addEventListener("click", e => {
       if (e.target.id !== "exit" && e.target.id !== "profile") {
         setProfileClicked(false);

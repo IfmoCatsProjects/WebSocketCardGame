@@ -1,69 +1,65 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Card, ClickOnCardDeck} from "./cardManager";
 import {createRoot} from "react-dom/client";
-import {mouseEnterOnCardDeck, mouseLeaveFromCardDeck, click, Frame, put, take} from "./events";
-import {send} from "./connection";
+import Events, {Frame} from "./events";
+import {send, subscribe} from "./connection";
+import {MoveSubscriptions} from "./subscriptions";
 
-class Game extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            clicked: false,
-            clickedCard: null,
-        }
-    }
-    createDeck() {
+export function Game({common}) {
+    const [state, setState] = useState({
+        clicked: false,
+        clickedCard: null,
+    })
+    const events = new Events(state, setState)
+
+    const createDeck = () => {
         let cards = []
         let offset = 21;
         for (let i = 0; i < 35; i++) {
             cards.push(<Card id={"card" + i} image={"shirt"} top={"27vh"} left={`${offset}vw`}
-             onClick={(el) => click(el, this)}
-             onMouseEnter={(el) => mouseEnterOnCardDeck(this, el)}
-             onMouseLeave={(el) => mouseLeaveFromCardDeck(this, el)}/>)
+             onClick={(el) => events.click(el)}
+             onMouseEnter={(el) => events.mouseEnterOnCardDeck(el)}
+             onMouseLeave={(el) => events.mouseLeaveFromCardDeck(el)}/>)
             offset = offset + 1.57
         }
         return cards
     }
 
-    render() {
-        let deck = this.createDeck()
+    useEffect(() => MoveSubscriptions.setSubscriptions(setState), [])
 
-        return (<div id={"main"}>
+    return (
+        <div id={"main"}>
             <div id={"top"}>
                 <button onClick={(el) => {send({}, "close", true, () => {}); el.target.disabled = true}}>Stop</button>
 
                 <Card id={"1"} image={"shirt"} top={"12vh"} left={"50vw"} display={"none"} />
-                <Frame id={"frame1"} top={"12vh"} left={"50vw"} app={this} onClick={(frame) => put(this, frame)}/>
+                <Frame id={"frame1"} top={"12vh"} left={"50vw"} clicked={state.clicked} onClick={(frame) => events.put(frame)}/>
             </div>
             <div id={"center"}>
                 <Card id={"2"} image={"shirt"} top={"27vh"} left={"5vw"} display={"none"} />
-                <Frame id={"frame2"} top={"27vh"} left={"5vw"} app={this} onClick={(frame) => put(this, frame)}/>
+                <Frame id={"frame2"} top={"27vh"} left={"5vw"} clicked={state.clicked} onClick={(frame) => events.put(frame)}/>
 
-                {deck.map((e) => e)}
+                {createDeck().map((e) => e)}
 
-                <Card id={"3"} image={this.props.common} top={"27vh"} left={"84vw"} />
-                <Frame id={"frame3"} top={"27vh"} left={"84vw"} app={this} onClick={(frame) => put(this, frame)}/>
+                <Card id={"3"} image={common} top={"27vh"} left={"84vw"} />
+                <Frame id={"frame3"} top={"27vh"} left={"84vw"} clicked={state.clicked} onClick={(frame) => events.put(frame)}/>
             </div>
             <div id={"bottom"}>
-                <Card id={"0"} image={"shirt"} top={"10vh"} left={"50vw"} display={"none"} onClick={() => take(this)}/>
-                <Frame id={"frame0"} top={"10vh"} left={"50vw"} app={this} onClick={(frame) => put(this, frame)}/>
+                <Card id={"0"} image={"shirt"} top={"10vh"} left={"50vw"} display={"none"} onClick={() => events.take()}/>
+                <Frame id={"frame0"} top={"10vh"} left={"50vw"} clicked={state.clicked} onClick={(frame) => events.put(frame)}/>
             </div>
-            <ClickOnCardDeck app={this}/>
-        </div>)
-    }
-
+            <ClickOnCardDeck state={state}/>
+        </div>
+        )
 }
-export function game() {
-    const root = createRoot(document.getElementById("root"))
-    const start = () => {
-        send({number: 12}, "connect", true, () => {
-            send({}, "start", true, (message) => {
-                root.render(<Game common={message}/>)
-            })
-        })
-    }
-    root.render(<button id={"start"} onClick={start}>Start</button>)
-}
-game()
+function game(root) {
+    subscribe("/players/game/connect", () => send({}, "start"))
+    subscribe("/players/game/start", (card) => root.render(<Game common={card}/>))
 
-export default Game
+    send({id: 12}, "connect")
+}
+const root = createRoot(document.getElementById("root"))
+root.render(
+    <div>
+        <button id={"start"} onClick={() => game(root)}>Start</button>
+    </div>)

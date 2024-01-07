@@ -1,6 +1,7 @@
 import React, {useContext, useState} from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import {GameTypeContext} from "./home";
+import {ajax} from "../utils/requests";
 
 export function GameRoom({setGameType}) {
     return (<div id={"game-create"}>
@@ -34,13 +35,18 @@ function GameType() {
         }
     }
 
+    const createGame = () => {
+        const response = ajax("/createGame", "POST", {count: playersCount})
+        response.onload = () => window.location.pathname = "/"
+    }
+
     if (gameType === "create") {
         return (<div>
             <div onClick={e => changeCount(e)} id={"players"}>
                 <div className={"player-count-selector two-players selected"}>2 игрока</div>
                 <div className={"player-count-selector three-players"}>3 игрока</div>
             </div>
-            <button id={"create-button"}>Создать</button>
+            <button id={"create-button"} onClick={createGame}>Создать</button>
         </div>)
     } else if (gameType === "join") {
         return (<div>

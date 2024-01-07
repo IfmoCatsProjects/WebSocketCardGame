@@ -41,4 +41,9 @@ module.exports = {
                 use: ["style-loader", "css-loader"]
             }],
     },
+    resolve: {
+        fallback: {
+            "net": false
+        }
+    }
 }

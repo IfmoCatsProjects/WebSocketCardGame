@@ -1,29 +1,17 @@
 package org.ioanntar.webproject.modules;
 
+import lombok.ToString;
+import org.json.JSONObject;
+
+@ToString
 public class Request {
-    private String data;
-    private int number;
+    private final JSONObject jsonObject;
 
-    public Request() {
+    public Request(String json) {
+        jsonObject = new JSONObject(json);
     }
 
-    public Request(String data) {
-        this.data = data;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public int getNumber() {
-        return number;
-    }
-
-    @Override
-    public String toString() {
-        return "Request{" +
-                "data='" + data + '\'' +
-                ", playerDeck='" + number + '\'' +
-                '}';
+    public String getString(String key) {
+        return jsonObject.getString(key);
     }
 }

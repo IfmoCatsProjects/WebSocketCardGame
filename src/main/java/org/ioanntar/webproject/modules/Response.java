@@ -1,5 +1,6 @@
 package org.ioanntar.webproject.modules;
 
+import lombok.ToString;
 import org.ioanntar.webproject.database.entities.Game;
 import org.ioanntar.webproject.database.entities.Player;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -7,6 +8,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@ToString
 public class Response {
 
     private Set<String> players;
@@ -17,22 +19,22 @@ public class Response {
         players = game.getPlayers().stream().map(Player::getPrincipal).collect(Collectors.toSet());
     }
 
-    public void sendToPlayers(SimpMessagingTemplate template, String response) {
+    public void sendToPlayers(SimpMessagingTemplate template, String destination, String response) {
         for (String player : players) {
             if (player.equals("common")) {
                 break;
             }
-            template.convertAndSendToUser(player, "/game", response);
+            template.convertAndSendToUser(player, "/game/" + destination, response);
         }
     }
 
-    public void sendToPlayers(SimpMessagingTemplate template, List<String> responses) {
+    public void sendToPlayers(SimpMessagingTemplate template, String destination, List<String> responses) {
         Iterator<String> iterator = responses.iterator();
         for (String player : players) {
             if (player.equals("common")) {
                 break;
             }
-            template.convertAndSendToUser(player, "/game", iterator.next());
+            template.convertAndSendToUser(player, "/game/" + destination, iterator.next());
         }
     }
 
@@ -47,12 +49,5 @@ public class Response {
             }
         }
         return list;
-    }
-
-    @Override
-    public String toString() {
-        return "Response{" +
-                "players=" + players +
-                '}';
     }
 }

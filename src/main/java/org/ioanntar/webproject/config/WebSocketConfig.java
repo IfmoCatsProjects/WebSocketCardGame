@@ -3,6 +3,7 @@ package org.ioanntar.webproject.config;
 import org.ioanntar.webproject.modules.StompPrincipal;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.web.socket.WebSocketHandler;
@@ -17,7 +18,7 @@ import java.util.UUID;
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer, ChannelInterceptor {
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -28,13 +29,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer, Channe
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/pig").setHandshakeHandler(new CustomHandshakeHandler());
+        registry.addEndpoint("/pig").withSockJS();
     }
 
-    class CustomHandshakeHandler extends DefaultHandshakeHandler {
-        @Override
-        protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
-            return new StompPrincipal(UUID.randomUUID().toString());
-        }
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(new PlayerInterceptor());
     }
 }

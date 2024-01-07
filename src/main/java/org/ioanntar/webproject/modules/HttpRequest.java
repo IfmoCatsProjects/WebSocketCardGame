@@ -46,7 +46,7 @@ public class HttpRequest {
             return jsonObject.toString();
         }
 
-        session.setAttribute("id", player.getId());
+        session.setAttribute("playerId", player.getId());
         jsonObject.put("status", "ok");
         return jsonObject.toString();
     }
@@ -66,7 +66,7 @@ public class HttpRequest {
         player = database.merge(player);
         database.commit();
 
-        session.setAttribute("id", player.getId());
+        session.setAttribute("playerId", player.getId());
         jsonObject.put("status", "ok");
         return jsonObject.toString();
     }

@@ -8,9 +8,8 @@ export function Card(props){
         onMouseLeave={props.onMouseLeave}/>)
 }
 
-export function ClickOnCardDeck(props) {
+export function ClickOnCardDeck({state}) {
     const [coordinates, setCoordinates] = useState({x: 0, y: 0})
-    const app = props.app
 
     useEffect(() => {
         const cardManager = event => {
@@ -21,13 +20,13 @@ export function ClickOnCardDeck(props) {
         };
         window.addEventListener('mousemove', cardManager);
 
-        return () => window.removeEventListener('mousemove', cardManager,)
+        return () => window.removeEventListener('mousemove', cardManager)
     }, [])
 
-    if (app.state.clicked) {
+    if (state.clicked) {
         return (
             <div id={"move-card"} style={{top: `${coordinates.y}px`, left: `${coordinates.x}px`}}>
-                <Card id={"move"} image={app.state.clickedCard}/>
+                <Card id={"move"} image={state.clickedCard}/>
             </div>
         )
     }
