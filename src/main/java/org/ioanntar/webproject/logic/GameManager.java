@@ -13,4 +13,8 @@ public class GameManager {
         database.close();
         session.setAttribute("gameId", game.getId());
     }
+
+    public void bind() {
+
+    }
 }

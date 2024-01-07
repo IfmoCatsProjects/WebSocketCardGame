@@ -22,13 +22,6 @@ public class GameController {
     private SimpMessagingTemplate template;
     private final Database database = new Database();
 
-    @MessageMapping("/hello")
-    public void send(@Payload String data, SimpMessageHeaderAccessor sha) {
-        JSONObject jsonObject = new JSONObject(data);
-        String message = "Hello from " + sha.getUser().getName();
-        template.convertAndSendToUser(jsonObject.getString("id"), "/game/test", message);
-    }
-
     @MessageMapping("/connect")
     public void connect(@Payload String data, SimpMessageHeaderAccessor sha) {
         Game game = database.get(Game.class, 22);//TODO временная очистка всех игр

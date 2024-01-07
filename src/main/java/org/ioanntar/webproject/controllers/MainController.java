@@ -31,10 +31,10 @@ public class MainController {
         return new HttpRequest().getClientData((long) session.getAttribute("playerId")).toString();
     }
 
-    @GetMapping("/exit")
-    public void exit(HttpServletRequest request) {
+    @GetMapping("/exit/{attribute}")
+    public void exit(HttpServletRequest request, @PathVariable("attribute") String attribute) {
         HttpSession session = request.getSession();
-        session.removeAttribute("playerId");
+        session.removeAttribute(attribute);
     }
 
     @PostMapping("/createGame")

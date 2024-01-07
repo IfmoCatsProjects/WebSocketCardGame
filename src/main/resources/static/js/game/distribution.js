@@ -58,8 +58,8 @@ function game(root) {
 
     send({id: 12}, "connect")
 }
-const root = createRoot(document.getElementById("root"))
-root.render(
-    <div>
-        <button id={"start"} onClick={() => game(root)}>Start</button>
-    </div>)
+// const root = createRoot(document.getElementById("root"))
+// root.render(
+//     <div>
+//         <button id={"start"} onClick={() => game(root)}>Start</button>
+//     </div>)

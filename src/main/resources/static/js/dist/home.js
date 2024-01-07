@@ -110,7 +110,7 @@ function Header({
 }) {
   const [isProfileClicked, setProfileClicked] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const exit = () => {
-    const response = (0,_utils_requests__WEBPACK_IMPORTED_MODULE_1__.ajax)("/exit", "GET", {});
+    const response = (0,_utils_requests__WEBPACK_IMPORTED_MODULE_1__.ajax)("/exit/playerId", "GET", {});
     response.onload = () => {
       window.location.pathname = "/";
     };
