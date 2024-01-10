@@ -21,9 +21,6 @@ public class Player {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "principal")
-    private String principal;
-
     @Column(name = "position")
     private Integer position;
 

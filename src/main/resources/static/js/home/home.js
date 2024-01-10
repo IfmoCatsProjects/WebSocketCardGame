@@ -34,7 +34,7 @@ function Home() {
         </div>
         {gameType !== "none" ?
             <GameTypeContext.Provider value={gameType}>
-                <GameRoom setGameType={setGameType}/>
+                <GameRoom setGameType={setGameType} gameType={gameType}/>
             </GameTypeContext.Provider> : ""}
     </div>)
 }

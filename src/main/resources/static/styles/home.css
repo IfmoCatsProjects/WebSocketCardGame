@@ -218,7 +218,7 @@ header {
     opacity: 0.7;
 }
 
-#game-window {
+.game-window {
     width: 300px;
     height: 200px;
     position: absolute;
@@ -293,11 +293,6 @@ header {
     font-size: 1.2em;
 }
 
-#create-button:hover {
-    transform: scale(1.1) translateX(-45%);
-    cursor: pointer;
-}
-
 #find-game {
     transform: translateX(-50%);
     margin-left: 50%;
@@ -308,13 +303,22 @@ header {
     margin-bottom: 20px;
 }
 
-#join-button {
-    transform: translateX(-50%);
-    margin-left: 50%;
-    width: 55%;
-    height: 40px;
+.transfer-button {
+    margin: 0 auto;
     border-radius: 10px;
     background: linear-gradient(to left, purple 40%, darkblue 75%);
+    font-size: 1.2em;
+    height: 40px;
+    color: white;
+}
+
+.transfer-button:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+#join-button {
+    width: 55%;
     color: white;
     font-size: 1.2em;
 }

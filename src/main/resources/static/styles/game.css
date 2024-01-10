@@ -130,10 +130,12 @@ img.hidden {
 .leave-button:hover {
     background: red;
     color: white;
+    cursor: pointer;
 }
 
 .start-button:hover:not(:disabled) {
     background: green;
+    cursor: pointer;
 }
 
 #black-circle {

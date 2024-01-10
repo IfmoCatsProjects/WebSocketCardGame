@@ -59,13 +59,24 @@ public class GameManager {
         return jsonObject.toString();
     }
 
-    public void join(HttpSession session, long gameId) {
+    public String join(HttpSession session, long gameId) {
         Player player = database.get(Player.class, (long) session.getAttribute("playerId"));
         Game game = database.get(Game.class, gameId);
+
+        JSONObject jsonObject = new JSONObject();
+        if (game == null) {
+            jsonObject.put("status", "not found");
+            return jsonObject.toString();
+        } else if (game.getPlayers().size() == game.getCount()) {
+            jsonObject.put("status", "full");
+            return jsonObject.toString();
+        }
+
         player.setGame(game);
         database.commit();
-
         session.setAttribute("gameId", gameId);
+        jsonObject.put("status", "ok");
+        return jsonObject.toString();
     }
 
     public Game connectToGame(String data, SimpMessageHeaderAccessor sha) {

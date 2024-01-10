@@ -51,9 +51,9 @@ public class MainController {
     }
 
     @PostMapping("/joinGame")
-    public void joinGame(@RequestParam String data, HttpServletRequest request) {
+    public String joinGame(@RequestParam String data, HttpServletRequest request) {
         JSONObject object = new JSONObject(data);
         long gameId = object.getLong("gameId");
-        new GameManager().join(request.getSession(), gameId);
+        return new GameManager().join(request.getSession(), gameId);
     }
 }
