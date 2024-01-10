@@ -9,11 +9,15 @@ import java.util.List;
 public class Database {
 
     private final Session session;
-    private Transaction transaction;
+    private final Transaction transaction;
 
     public Database() {
         session = HibernateUtils.getSessionFactory().openSession();
-        transaction = session.beginTransaction();
+        transaction = session.getTransaction();
+        if (!transaction.isActive()) {
+            transaction.begin();
+            session.flush();
+        }
     }
 
     public <T> T get(Class<?> entityClass, long id) {
@@ -32,13 +36,8 @@ public class Database {
 
     public void commit() {
         transaction.commit();
-        transaction = session.beginTransaction();
     }
 
-    public void close() {
-        transaction.commit();
-        session.close();
-    }
     public <T> void delete(T entity) {
         session.remove(entity);
     }

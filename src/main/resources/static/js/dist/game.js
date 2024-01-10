@@ -90,7 +90,8 @@ function cardMouseMove(el) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   send: () => (/* binding */ send),
-/* harmony export */   subscribe: () => (/* binding */ subscribe)
+/* harmony export */   subscribe: () => (/* binding */ subscribe),
+/* harmony export */   webSocketGameConnect: () => (/* binding */ webSocketGameConnect)
 /* harmony export */ });
 /* harmony import */ var sockjs_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sockjs-client */ "./node_modules/sockjs-client/lib/entry.js");
 /* harmony import */ var sockjs_client__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sockjs_client__WEBPACK_IMPORTED_MODULE_0__);
@@ -100,13 +101,12 @@ __webpack_require__.r(__webpack_exports__);
 
 const socket = new (sockjs_client__WEBPACK_IMPORTED_MODULE_0___default())("/pig");
 const stompClient = stompjs__WEBPACK_IMPORTED_MODULE_1___default().over(socket);
-// stompClient.debug = null
-
-stompClient.connect({
-  id: "12"
-}, () => {
-  document.getElementById("start").disabled = false;
-});
+stompClient.debug = null;
+function webSocketGameConnect(playerId, callback) {
+  stompClient.connect({
+    id: playerId
+  }, callback);
+}
 function send(object, destination) {
   if (stompClient.connected) {
     stompClient.send(`/app/${destination}`, {}, JSON.stringify(object));
@@ -348,18 +348,48 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_dom_client__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom/client */ "./node_modules/react-dom/client.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-icons/fa */ "./node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-icons/fa */ "./node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _utils_requests__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/requests */ "./src/main/resources/static/js/utils/requests.js");
+/* harmony import */ var _connection__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./connection */ "./src/main/resources/static/js/game/connection.js");
+
 
 
 
 
 function Game() {
   const [startGame, setStartGame] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [data, setData] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
+    playerId: 0,
+    gameId: 0,
+    name: "",
+    email: "",
+    weight: 0,
+    rating: 0
+  });
+  const [players, setPlayers] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const leave = () => {
-    const response = (0,_utils_requests__WEBPACK_IMPORTED_MODULE_2__.ajax)("/exit/gameId", "GET", {});
+    (0,_connection__WEBPACK_IMPORTED_MODULE_3__.send)({}, "/disconnect");
+    const response = (0,_utils_requests__WEBPACK_IMPORTED_MODULE_2__.ajax)("/exit_game", "GET", {});
     response.onload = () => window.location.pathname = "/";
   };
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    const response = (0,_utils_requests__WEBPACK_IMPORTED_MODULE_2__.ajax)("/get_client", "GET", {});
+    response.onload = () => {
+      const text = JSON.parse(response.responseText);
+      setData(text);
+      (0,_connection__WEBPACK_IMPORTED_MODULE_3__.webSocketGameConnect)(text.playerId, () => {
+        (0,_connection__WEBPACK_IMPORTED_MODULE_3__.subscribe)("/players/game/connectedPlayers", resp => {
+          const players = JSON.parse(resp);
+          setPlayers(players["players"]);
+        });
+        (0,_connection__WEBPACK_IMPORTED_MODULE_3__.send)({
+          playerId: text.playerId,
+          gameId: text.gameId,
+          name: text.name
+        }, "connect");
+      });
+    };
+  }, []);
   if (!startGame) return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     id: "main"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
@@ -367,42 +397,41 @@ function Game() {
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     id: "waiting-window",
     className: "center"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", null, "ID \u0438\u0433\u0440\u044B: 23"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", null, "ID \u0438\u0433\u0440\u044B: ", data.gameId), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     id: "connected-players",
     className: "center"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "player connected"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    id: "black-circle"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
-    className: "profile",
-    src: "../images/profile.png"
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", null, "IvanIvanIvanIvan"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", {
-    id: "admin",
-    className: "center"
-  }, "\u0410\u0434\u043C\u0438\u043D")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "player"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    id: "user-clock",
-    className: "center"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(react_icons_fa__WEBPACK_IMPORTED_MODULE_3__.FaUserClock, {
-    size: 100
-  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "player"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    id: "user-clock",
-    className: "center"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(react_icons_fa__WEBPACK_IMPORTED_MODULE_3__.FaUserClock, {
-    size: 100
-  })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  }, getViewPlayers(players, data.playerId).map(e => e)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     id: "logic-buttons"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
     className: "logic-button start-button",
-    disabled: true
+    disabled: players.includes(null)
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("b", null, "\u0421\u0442\u0430\u0440\u0442")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
     className: "logic-button leave-button",
     onClick: leave
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("b", null, "\u041F\u043E\u043A\u0438\u043D\u0443\u0442\u044C")))));
+}
+function getViewPlayers(players, playerId) {
+  let totalPlayers = [];
+  for (let i = 0; i < players.length; i++) {
+    if (players[i] != null) totalPlayers.push( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      className: "player connected"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      id: "black-circle"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
+      className: "profile",
+      src: "../images/profile.png"
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", null, players[i].name), players[i].playerId === playerId ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h3", {
+      id: "you"
+    }, "\u0412\u044B") : ""));else totalPlayers.push( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      className: "player"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      id: "user-clock",
+      className: "center"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(react_icons_fa__WEBPACK_IMPORTED_MODULE_4__.FaUserClock, {
+      size: 100
+    }))));
+  }
+  return totalPlayers;
 }
 const root = (0,react_dom_client__WEBPACK_IMPORTED_MODULE_1__.createRoot)(document.getElementById("root"));
 root.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(Game, null));

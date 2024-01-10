@@ -18,6 +18,7 @@ export function GameRoom({setGameType}) {
 
 function GameType() {
     const [playersCount, setPlayersCount] = useState(2)
+    const[gameIdJoin, setGameIdJoin] = useState(null)
     const gameType = useContext(GameTypeContext)
 
     const changeCount = (e) => {
@@ -40,6 +41,11 @@ function GameType() {
         response.onload = () => window.location.pathname = "/"
     }
 
+    const joinGame = () => {
+        const response = ajax("/joinGame", "POST", {gameId: gameIdJoin})
+        response.onload = () => window.location.pathname = "/"
+    }
+
     if (gameType === "create") {
         return (<div>
             <div onClick={e => changeCount(e)} id={"players"}>
@@ -51,8 +57,8 @@ function GameType() {
     } else if (gameType === "join") {
         return (<div>
             <h3>Введите id игры</h3>
-            <input type={"number"} id={"find-game"} min={1} max={Math.pow(2, 63) - 1}/>
-            <button id={"join-button"}>Присоединиться</button>
+            <input type={"number"} id={"find-game"} min={1} max={Math.pow(2, 63) - 1} onChange={(e) => setGameIdJoin(e.target.value)}/>
+            <button id={"join-button"} onClick={joinGame}>Присоединиться</button>
         </div>)
     }
 }

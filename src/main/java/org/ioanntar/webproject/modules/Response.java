@@ -11,31 +11,24 @@ import java.util.stream.Collectors;
 @ToString
 public class Response {
 
-    private Set<String> players;
+    private Set<Long> players;
 
     public Response() {}
 
     public Response(Game game) {
-        players = game.getPlayers().stream().map(Player::getPrincipal).collect(Collectors.toSet());
+        players = game.getPlayers().stream().map(Player::getId).collect(Collectors.toSet());
     }
 
     public void sendToPlayers(SimpMessagingTemplate template, String destination, String response) {
-        for (String player : players) {
-            if (player.equals("common")) {
-                break;
-            }
-            template.convertAndSendToUser(player, "/game/" + destination, response);
-        }
+        for (long player : players)
+            template.convertAndSendToUser(String.valueOf(player), "/game/" + destination, response);
+
     }
 
     public void sendToPlayers(SimpMessagingTemplate template, String destination, List<String> responses) {
         Iterator<String> iterator = responses.iterator();
-        for (String player : players) {
-            if (player.equals("common")) {
-                break;
-            }
-            template.convertAndSendToUser(player, "/game/" + destination, iterator.next());
-        }
+        for (long player : players)
+            template.convertAndSendToUser(String.valueOf(player), "/game/" + destination, iterator.next());
     }
 
     //TODO Внедрить этот метод после реализации поддержки нескольких игроков

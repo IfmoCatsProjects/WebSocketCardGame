@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Data
-@ToString(exclude = {"players", "gameDecks"})
+@ToString(exclude = {"gameDecks", "players"})
 @Entity
 @Table(name = "games")
 public class Game {
@@ -24,7 +24,7 @@ public class Game {
     @Column(name = "current")
     private int current;
 
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "game", cascade = CascadeType.MERGE)
     private List<Player> players;
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)

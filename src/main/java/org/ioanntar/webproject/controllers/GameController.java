@@ -2,8 +2,8 @@ package org.ioanntar.webproject.controllers;
 
 import org.ioanntar.webproject.database.entities.*;
 import org.ioanntar.webproject.database.utils.Database;
+import org.ioanntar.webproject.logic.GameManager;
 import org.ioanntar.webproject.logic.GenerateDeck;
-import org.ioanntar.webproject.modules.Request;
 import org.ioanntar.webproject.modules.Response;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,29 +20,31 @@ public class GameController {
 
     @Autowired
     private SimpMessagingTemplate template;
-    private final Database database = new Database();
+    private final Database database = null;
 
     @MessageMapping("/connect")
-    public void connect(@Payload String data, SimpMessageHeaderAccessor sha) {
-        Game game = database.get(Game.class, 22);//TODO временная очистка всех игр
-        try {
-            game.getGameDecks().clear();
-            for (Player player: game.getPlayers()) {
-                player.getPlayersDeck().clear();
-            }
-        } catch (NullPointerException ignored) {}
-        database.commit();
+    public void bind(@Payload String data, SimpMessageHeaderAccessor sha) {
+//        Game game = database.get(Game.class, 22);//TODO временная очистка всех игр
+//        try {
+//            game.getGameDecks().clear();
+//            for (Player player: game.getPlayers()) {
+//                player.getPlayersDeck().clear();
+//            }
+//        } catch (NullPointerException ignored) {}
+//        database.commit();
         //-------------------------------------------------------------------
-        JSONObject jsonObject = new JSONObject(data);
-        Game game1 = database.get(Game.class, 22);
+        GameManager gameManager = new GameManager();
+        Game game = gameManager.connectToGame(data, sha);
+        String players = gameManager.bind(game);
+        new Response(game).sendToPlayers(template, "connectedPlayers", players);
+    }
 
-        Player player = database.get(Player.class, jsonObject.getLong("id"));
-        player.setGame(game1);
-        database.commit();
-        sha.getSessionAttributes().put("playerId", player.getId());
-        sha.getSessionAttributes().put("gameId", game.getId());
-
-        template.convertAndSendToUser(sha.getUser().getName(), "/game/connect", "");
+    @MessageMapping("/disconnect")
+    public void disconnect(SimpMessageHeaderAccessor sha) {
+        GameManager gameManager = new GameManager();
+        Game game = gameManager.exit(sha);
+        String players = gameManager.bind(game);
+        new Response(game).sendToPlayers(template, "connectedPlayers", players);
     }
 
     @MessageMapping("/start")
@@ -114,10 +116,5 @@ public class GameController {
         new Response(player.getGame()).sendToPlayers(template, "take", jsonObject.toString());
 
         database.commit();
-    }
-
-    @MessageMapping("/close")
-    public void closeDataBase() {
-        database.close();
     }
 }

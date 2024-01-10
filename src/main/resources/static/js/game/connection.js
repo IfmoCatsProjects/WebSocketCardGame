@@ -3,11 +3,11 @@ import Stomp from "stompjs"
 
 const socket = new SockJS("/pig")
 const stompClient = Stomp.over(socket)
-// stompClient.debug = null
+stompClient.debug = null
 
-stompClient.connect({id: "12"}, () => {
-    document.getElementById("start").disabled = false
-})
+export function webSocketGameConnect(playerId, callback) {
+    stompClient.connect({id: playerId}, callback)
+}
 
 export function send(object, destination) {
     if (stompClient.connected) {

@@ -31,17 +31,29 @@ public class MainController {
         return new HttpRequest().getClientData((long) session.getAttribute("playerId")).toString();
     }
 
-    @GetMapping("/exit/{attribute}")
-    public void exit(HttpServletRequest request, @PathVariable("attribute") String attribute) {
+    @GetMapping("/exit_home")
+    public void exitHome(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        session.removeAttribute(attribute);
+        session.removeAttribute("playerId");
     }
 
     @PostMapping("/createGame")
-    public String createGame(@RequestParam String data, HttpServletRequest request) {
+    public void createGame(@RequestParam String data, HttpServletRequest request) {
         JSONObject object = new JSONObject(data);
         int count = object.getInt("count");
         new GameManager().create(request.getSession(), count);
-        return null;
+    }
+
+    @GetMapping("/exit_game")
+    public void exitGame(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        session.removeAttribute("gameId");
+    }
+
+    @PostMapping("/joinGame")
+    public void joinGame(@RequestParam String data, HttpServletRequest request) {
+        JSONObject object = new JSONObject(data);
+        long gameId = object.getLong("gameId");
+        new GameManager().join(request.getSession(), gameId);
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class HttpRequest {
     private JSONObject object;
-    private Database database = new Database();
+    private final Database database = new Database();
 
     public HttpRequest(JSONObject object) {
         this.object = object;
@@ -23,11 +23,14 @@ public class HttpRequest {
         Player player = database.get(Player.class, id);
 
         JSONObject jsonObject = new JSONObject();
+        jsonObject.put("playerId", player.getId());
+        jsonObject.put("gameId", player.getGame() != null ? player.getGame().getId() : null);
         jsonObject.put("email", player.getEmail());
         jsonObject.put("name", player.getName());
         jsonObject.put("rating", player.getRating());
         jsonObject.put("weight", player.getWeight());
 
+        database.commit();
         return jsonObject;
     }
 
@@ -48,6 +51,7 @@ public class HttpRequest {
 
         session.setAttribute("playerId", player.getId());
         jsonObject.put("status", "ok");
+        database.commit();
         return jsonObject.toString();
     }
 

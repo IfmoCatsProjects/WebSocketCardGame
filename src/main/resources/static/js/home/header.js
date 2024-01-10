@@ -7,7 +7,7 @@ export function Header({data, setData}) {
     const [isProfileClicked, setProfileClicked] = useState(false)
 
     const exit = () => {
-        const response = ajax("/exit/playerId", "GET", {})
+        const response = ajax("/exit_home", "GET", {})
         response.onload = () => {
             window.location.pathname = "/"
         }

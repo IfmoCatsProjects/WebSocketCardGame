@@ -88,10 +88,12 @@ img.hidden {
     background-color: lime;
 }
 
-#admin {
+#you {
     background-color: white;
-    width: 50%;
+    width: 40%;
     border-radius: 10px;
+    margin-left: 50%;
+    transform: translateX(-50%);
 }
 
 #logic-buttons {

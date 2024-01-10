@@ -40,6 +40,7 @@ function GameRoom({
 }
 function GameType() {
   const [playersCount, setPlayersCount] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(2);
+  const [gameIdJoin, setGameIdJoin] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
   const gameType = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_home__WEBPACK_IMPORTED_MODULE_1__.GameTypeContext);
   const changeCount = e => {
     let elementProps = e.target.getBoundingClientRect();
@@ -56,6 +57,12 @@ function GameType() {
   const createGame = () => {
     const response = (0,_utils_requests__WEBPACK_IMPORTED_MODULE_2__.ajax)("/createGame", "POST", {
       count: playersCount
+    });
+    response.onload = () => window.location.pathname = "/";
+  };
+  const joinGame = () => {
+    const response = (0,_utils_requests__WEBPACK_IMPORTED_MODULE_2__.ajax)("/joinGame", "POST", {
+      gameId: gameIdJoin
     });
     response.onload = () => window.location.pathname = "/";
   };
@@ -76,9 +83,11 @@ function GameType() {
       type: "number",
       id: "find-game",
       min: 1,
-      max: Math.pow(2, 63) - 1
+      max: Math.pow(2, 63) - 1,
+      onChange: e => setGameIdJoin(e.target.value)
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
-      id: "join-button"
+      id: "join-button",
+      onClick: joinGame
     }, "\u041F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u0442\u044C\u0441\u044F"));
   }
 }
@@ -110,7 +119,7 @@ function Header({
 }) {
   const [isProfileClicked, setProfileClicked] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const exit = () => {
-    const response = (0,_utils_requests__WEBPACK_IMPORTED_MODULE_1__.ajax)("/exit/playerId", "GET", {});
+    const response = (0,_utils_requests__WEBPACK_IMPORTED_MODULE_1__.ajax)("/exit_home", "GET", {});
     response.onload = () => {
       window.location.pathname = "/";
     };
