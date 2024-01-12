@@ -9,23 +9,28 @@ export function Card(props){
 }
 
 export function ClickOnCardDeck({state}) {
-    const [coordinates, setCoordinates] = useState({x: 0, y: 0})
+    const [coordinates, setCoordinates] = useState({x: "50%", y: "50%"})
 
     useEffect(() => {
-        const cardManager = event => {
-            setCoordinates({
-                x: event.pageX,
-                y: event.pageY,
-            });
-        };
-        window.addEventListener('mousemove', cardManager);
+        if (state.current === state.position) {
+            const cardManager = event => {
+                setCoordinates({
+                    x: `${event.pageX}px`,
+                    y: `${event.pageY}px`,
+                });
+            };
+            window.addEventListener('mousemove', cardManager);
 
-        return () => window.removeEventListener('mousemove', cardManager)
-    }, [])
+            return () => window.removeEventListener('mousemove', cardManager)
+        }
+    }, [state])
 
     if (state.clicked) {
+        let x = state.current === state.position ? coordinates.x : "50%"
+        let y = state.current === state.position ? coordinates.y : "50%"
+
         return (
-            <div id={"move-card"} style={{top: `${coordinates.y}px`, left: `${coordinates.x}px`}}>
+            <div id={"move-card"} style={{top: y, left: x}}>
                 <Card id={"move"} image={state.clickedCard}/>
             </div>
         )
@@ -34,16 +39,4 @@ export function ClickOnCardDeck({state}) {
 export function removeCard(id) {
     let element = document.getElementById(id)
     element.parentElement.removeChild(element)
-}
-
-function addCardToDeck(id, imgName) {
-    let card = document.getElementById(id)
-    card.style.display = ""
-    card.src = `../../images/${imgName}.png`
-    return card
-}
-
-export function cardMouseMove(el) {
-    el.target.style.left = el.target.pageX - 60 + 'px'
-    el.target.style.top = el.target.pageY - 90 + 'px';
 }

@@ -25,7 +25,7 @@ public class Game {
     private int current;
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.MERGE)
-    private List<Player> players;
+    private List<Player> players = new LinkedList<>();
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GameCard> gameDecks = new LinkedList<>();

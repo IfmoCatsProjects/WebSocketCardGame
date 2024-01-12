@@ -14,7 +14,7 @@ class Events {
     }
 
     mouseEnterOnCardDeck(el) {
-        if (!this.state.clicked) {
+        if (!this.state.clicked && this.state.current === this.state.position) {
             el.target.style.border = "2px solid blue"
             el.target.style.top = "26vh"
             el.target.style.cursor = "pointer"
@@ -22,7 +22,7 @@ class Events {
     }
 
     mouseLeaveFromCardDeck(el) {
-        if (!this.state.clicked) {
+        if (!this.state.clicked && this.state.current === this.state.position) {
             el.target.style.border = "1px solid black"
             el.target.style.top = "27vh"
             el.target.style.cursor = "default"
@@ -31,14 +31,12 @@ class Events {
 
     click(cardId) {
         let id = cardId.target.id
-        if (!this.state.clicked) {
-            send({card: id.substring(4)}, "click")
-            removeCard(id)
-        }
+        if (!this.state.clicked && this.state.current === this.state.position)
+            send({cardPos: id.substring(4)}, "click")
     }
 
     put(frame) {
-        if (this.state.clicked) {
+        if (this.state.clicked && this.state.current === this.state.position) {
             let id = frame.target.id.substring(5)
             send({player: id, card: this.state.clickedCard}, "put")
             console.log(this.state)
@@ -46,14 +44,14 @@ class Events {
     }
 
     take() {
-        if (!this.state.clicked) {
+        if (!this.state.clicked && this.state.current === this.state.position) {
             send({}, "take")
         }
     }
 }
 
 export function Frame(props) {
-    if (props.clicked) {
+    if (props.state.clicked && props.state.current === props.state.position) {
         return (<div id={props.id} className={"card frame"} style={{top: String(props.top), left: String(props.left)}}
                      onClick={props.onClick}></div>)
     }

@@ -1,91 +1,93 @@
 package org.ioanntar.webproject.logic;
 
-import jakarta.servlet.http.HttpSession;
-import org.ioanntar.webproject.database.entities.Game;
-import org.ioanntar.webproject.database.entities.Player;
+import org.ioanntar.webproject.database.entities.*;
 import org.ioanntar.webproject.database.utils.Database;
-import org.json.JSONArray;
+import org.ioanntar.webproject.modules.Response;
 import org.json.JSONObject;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class GameManager {
+    private final SimpMessageHeaderAccessor sha;
+    private final SimpMessagingTemplate template;
+    private Database database = new Database();
 
-    private final Database database = new Database();
-
-    public void create(HttpSession session, int count) {
-        Game game = database.merge(new Game(count));
-        Player player = database.get(Player.class, (long) session.getAttribute("playerId"));
-        player.setGame(game);
-
-        database.commit();
-
-        session.setAttribute("gameId", game.getId());
+    public GameManager(SimpMessageHeaderAccessor sha, SimpMessagingTemplate template) {
+        this.sha = sha;
+        this.template = template;
     }
 
-    public Game exit(SimpMessageHeaderAccessor sha) {
-        long playerId = (long) sha.getSessionAttributes().get("playerId");
-        Game game = database.get(Game.class, (long) sha.getSessionAttributes().get("gameId"));
-        Player player = database.get(Player.class, playerId);
-        if(game.getPlayers().size() == 1)
-            database.delete(game);
-
-        player.setGame(null);
+    public void start() {
+        long id = (long) sha.getSessionAttributes().get("gameId");
+        //-------------------------------------------------------------------
+        Game prevGame = database.get(Game.class, id - 1);//TODO временная очистка всех игр
+        try {
+            for (Player player: prevGame.getPlayers()) {
+                player.getPlayersDeck().clear();
+            }
+            database.delete(prevGame);
+        } catch (NullPointerException ignored) {}
+        //-------------------------------------------------------------------
         database.commit();
-        game.getPlayers().removeIf(p -> p.getId() == playerId);
-        return game;
+        database = new Database();
+        Game game = database.get(Game.class, id);
+
+        List<GameCard> gameDeck = GenerateDeck.generate(game);
+        GameCard card = gameDeck.get(35);
+        gameDeck.remove(35);
+        card.setType(DeckType.COMMON);
+        card.setPosition(0);
+        game.getGameDecks().addAll(gameDeck);
+        game.getGameDecks().add(card);
+
+        database.commit();
+        new Response(game, template).sendStart(card.getCard());
     }
 
-    public String bind(Game game) {
-        List<JSONObject> playersList = new LinkedList<>();
-        List<Player> players = game.getPlayers();
-        for (Player player: players) {
-            JSONObject jsonPlayers = new JSONObject();
-            jsonPlayers.put("name", player.getName());
-            jsonPlayers.put("playerId", player.getId());
-            jsonPlayers.put("rating", player.getRating());
-            jsonPlayers.put("weight", player.getWeight());
+    public void click(int cardPosition) {
+        long id = (long) sha.getSessionAttributes().get("gameId");
+        Game game = database.get(Game.class, id);
+        GameCard card = game.getGameDecks().stream().filter(c -> c.getPosition() == cardPosition).findFirst().get();
 
-            playersList.add(jsonPlayers);
+        new Response(game, template).sendToPlayers("click", new JSONObject().put("card", card.getCard()).put("cardPos",
+                "card" + cardPosition));
+        game.getGameDecks().remove(card);
+        database.commit();
+    }
+
+    public void put(int playerPut, String card) {
+        long id = (long) sha.getSessionAttributes().get("gameId");
+        Game game = database.get(Game.class, id);
+        int put;
+
+        if (playerPut == 3) {
+            put = playerPut;
+            int commonSize = game.getGameDecks().stream().filter(g -> g.getType() == DeckType.COMMON).toList().size();
+            game.getGameDecks().add(new GameCard(game, DeckType.COMMON, card, commonSize));
+        } else {
+            put = (game.getCurrent() + playerPut) % game.getCount();
+            Player player = game.getPlayers().stream().filter(p -> p.getPosition() == put).findFirst().get();
+            player.getPlayersDeck().add(new PlayerCard(player, card, player.getPlayersDeck().size()));
         }
+        new Response(game, template).sendToPlayers("put", new JSONObject().put("gamePos", put));
 
-        for(int i = 0; i < game.getCount() - players.size(); i++)
-            playersList.add(null);
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("players", new JSONArray(playersList));
-        return jsonObject.toString();
-    }
-
-    public String join(HttpSession session, long gameId) {
-        Player player = database.get(Player.class, (long) session.getAttribute("playerId"));
-        Game game = database.get(Game.class, gameId);
-
-        JSONObject jsonObject = new JSONObject();
-        if (game == null) {
-            jsonObject.put("status", "not found");
-            return jsonObject.toString();
-        } else if (game.getPlayers().size() == game.getCount()) {
-            jsonObject.put("status", "full");
-            return jsonObject.toString();
-        }
-
-        player.setGame(game);
+        if (playerPut == 0)
+            game.setCurrent((game.getCurrent() + 1) % (game.getCount()));
         database.commit();
-        session.setAttribute("gameId", gameId);
-        jsonObject.put("status", "ok");
-        return jsonObject.toString();
     }
 
-    public Game connectToGame(String data, SimpMessageHeaderAccessor sha) {
-        JSONObject jsonObject = new JSONObject(data);
-        Player player = database.get(Player.class, jsonObject.getLong("playerId"));
-        Game game = player.getGame();
-        sha.getSessionAttributes().put("playerId", player.getId());
-        sha.getSessionAttributes().put("gameId", jsonObject.getLong("gameId"));
+    public void take() {
+        long id = (long) sha.getSessionAttributes().get("playerId");
+        Player player = database.get(Player.class, id);
 
-        return game;
+        List<PlayerCard> deck = player.getPlayersDeck();
+        String card = deck.get(deck.size() - 1).getCard();
+        deck.remove(deck.size() - 1);
+        String subCard = deck.size() != 0 ? deck.get(deck.size() - 1).getCard() : "none";
+
+        database.commit();
+        new Response(player.getGame(), template).sendToPlayers("take", new JSONObject().put("card", card).put("subCard", subCard));
     }
 }

@@ -1,28 +1,52 @@
 import {subscribe} from "./connection";
+import {removeCard} from "./cardManager";
 
 export class MoveSubscriptions {
     static state
 
-    static setSubscriptions(setState) {
-        subscribe("/players/game/click", (card) => {
-            setState({clicked: true, clickedCard: card})    //клик по карте в колоде
+    static setSubscriptions(setState, count) {
+        subscribe("/players/game/click", (data) => {
+            data = JSON.parse(data)
+            setState(prevState => ({...prevState, clicked: true, clickedCard: data["card"]}))    //клик по карте в колоде
+            removeCard(data["cardPos"])
         })
 
-        subscribe("/players/game/put",(id) => {
-            let playerCard = document.getElementById(id)    //положить в чью-то колоду
+        subscribe("/players/game/put",(data) => {
+            data = JSON.parse(data)
+            const finalPos = getRelativeDeck(data["gamePos"], this.state.position, count)
+
+            const playerCard = document.getElementById(String(finalPos))    //положить в чью-то колоду
             playerCard.style.display = ""
             playerCard.src = `../../images/${this.state.clickedCard}.png`
-            setState({clicked: false, clickedCard: null})
+
+            if (data["gamePos"] - this.state.current === 0)
+                setState(prevState => ({...prevState, current: (this.state.current + 1) % count}))
+
+            setState(prevState => ({...prevState, clicked: false, clickedCard: null}))
         })
 
-        subscribe("/players/game/take",(msg) => {   //взять карту из своей колоды
-            const text = JSON.parse(msg)
-            setState({clicked: true, clickedCard: text["card"]})
+        subscribe("/players/game/take",(data) => {   //взять карту из своей колоды
+            data = JSON.parse(data)
+            const finalPos = getRelativeDeck(this.state.current, this.state.position, count)
+            const deck = document.getElementById(finalPos)
+            setState(prevState => ({...prevState, clicked: true, clickedCard: data["card"]}))
 
-            if(text["subCard"] === "none")
-                document.getElementById("0").style.display = "none"
+            if(data["subCard"] === "none")
+                deck.style.display = "none"
             else
-                document.getElementById("0").src = `../../images/${text["subCard"]}.png`
+                deck.src = `../../images/${data["subCard"]}.png`
         })
+
+        function getRelativeDeck(gamePos, position, count) {
+            let finalPos
+            if (gamePos === 3)
+                finalPos = 3
+            else {
+                finalPos = gamePos - position
+                finalPos = finalPos === -1 ? count - 1 : finalPos
+            }
+            return finalPos
+        }
+
     }
 }

@@ -81,4 +81,4 @@ function JoinError({error, setError}) {
         <h1 style={{marginTop: "20%"}}>{error === "not found" ? "Игра не найдена" : "Игра заполнена!"}</h1>
         <button className={"transfer-button"} onClick={() => setError("")}>Ок</button>
     </div>
-} 
+}

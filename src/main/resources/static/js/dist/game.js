@@ -12,7 +12,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Card: () => (/* binding */ Card),
 /* harmony export */   ClickOnCardDeck: () => (/* binding */ ClickOnCardDeck),
-/* harmony export */   cardMouseMove: () => (/* binding */ cardMouseMove),
 /* harmony export */   removeCard: () => (/* binding */ removeCard)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
@@ -37,25 +36,29 @@ function ClickOnCardDeck({
   state
 }) {
   const [coordinates, setCoordinates] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
-    x: 0,
-    y: 0
+    x: "50%",
+    y: "50%"
   });
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    const cardManager = event => {
-      setCoordinates({
-        x: event.pageX,
-        y: event.pageY
-      });
-    };
-    window.addEventListener('mousemove', cardManager);
-    return () => window.removeEventListener('mousemove', cardManager);
-  }, []);
+    if (state.current === state.position) {
+      const cardManager = event => {
+        setCoordinates({
+          x: `${event.pageX}px`,
+          y: `${event.pageY}px`
+        });
+      };
+      window.addEventListener('mousemove', cardManager);
+      return () => window.removeEventListener('mousemove', cardManager);
+    }
+  }, [state]);
   if (state.clicked) {
+    let x = state.current === state.position ? coordinates.x : "50%";
+    let y = state.current === state.position ? coordinates.y : "50%";
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       id: "move-card",
       style: {
-        top: `${coordinates.y}px`,
-        left: `${coordinates.x}px`
+        top: y,
+        left: x
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(Card, {
       id: "move",
@@ -66,16 +69,6 @@ function ClickOnCardDeck({
 function removeCard(id) {
   let element = document.getElementById(id);
   element.parentElement.removeChild(element);
-}
-function addCardToDeck(id, imgName) {
-  let card = document.getElementById(id);
-  card.style.display = "";
-  card.src = `../../images/${imgName}.png`;
-  return card;
-}
-function cardMouseMove(el) {
-  el.target.style.left = el.target.pageX - 60 + 'px';
-  el.target.style.top = el.target.pageY - 90 + 'px';
 }
 
 /***/ }),
@@ -129,29 +122,32 @@ function subscribe(point, callback) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Game: () => (/* binding */ Game)
+/* harmony export */   Distribution: () => (/* binding */ Distribution)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _cardManager__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./cardManager */ "./src/main/resources/static/js/game/cardManager.js");
-/* harmony import */ var react_dom_client__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-dom/client */ "./node_modules/react-dom/client.js");
-/* harmony import */ var _events__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./events */ "./src/main/resources/static/js/game/events.js");
-/* harmony import */ var _connection__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./connection */ "./src/main/resources/static/js/game/connection.js");
-/* harmony import */ var _subscriptions__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./subscriptions */ "./src/main/resources/static/js/game/subscriptions.js");
+/* harmony import */ var _events__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./events */ "./src/main/resources/static/js/game/events.js");
+/* harmony import */ var _connection__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./connection */ "./src/main/resources/static/js/game/connection.js");
+/* harmony import */ var _subscriptions__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./subscriptions */ "./src/main/resources/static/js/game/subscriptions.js");
 
 
 
 
 
-
-function Game({
-  common
+function Distribution({
+  common,
+  move,
+  pos,
+  count
 }) {
   const [state, setState] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
     clicked: false,
-    clickedCard: null
+    clickedCard: null,
+    current: move,
+    position: pos
   });
-  const events = new _events__WEBPACK_IMPORTED_MODULE_3__["default"](state, setState);
+  const events = new _events__WEBPACK_IMPORTED_MODULE_2__["default"](state, setState);
   const createDeck = () => {
     let cards = [];
     let offset = 21;
@@ -169,14 +165,14 @@ function Game({
     }
     return cards;
   };
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => _subscriptions__WEBPACK_IMPORTED_MODULE_5__.MoveSubscriptions.setSubscriptions(setState), []);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => _subscriptions__WEBPACK_IMPORTED_MODULE_4__.MoveSubscriptions.setSubscriptions(setState, count), []);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     id: "main"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     id: "top"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
     onClick: el => {
-      (0,_connection__WEBPACK_IMPORTED_MODULE_4__.send)({}, "close", true, () => {});
+      (0,_connection__WEBPACK_IMPORTED_MODULE_3__.send)({}, "close", true, () => {});
       el.target.disabled = true;
     }
   }, "Stop"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
@@ -185,37 +181,40 @@ function Game({
     top: "12vh",
     left: "50vw",
     display: "none"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_3__.Frame, {
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_2__.Frame, {
     id: "frame1",
     top: "12vh",
     left: "50vw",
     clicked: state.clicked,
-    onClick: frame => events.put(frame)
+    onClick: frame => events.put(frame),
+    state: state
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     id: "center"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
+  }, count === 3 ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
     id: "2",
     image: "shirt",
     top: "27vh",
     left: "5vw",
     display: "none"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_3__.Frame, {
+  }) : "", count === 3 ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_2__.Frame, {
     id: "frame2",
     top: "27vh",
     left: "5vw",
     clicked: state.clicked,
-    onClick: frame => events.put(frame)
-  }), createDeck().map(e => e), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
+    onClick: frame => events.put(frame),
+    state: state
+  }) : "", createDeck().map(e => e), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
     id: "3",
     image: common,
     top: "27vh",
     left: "84vw"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_3__.Frame, {
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_2__.Frame, {
     id: "frame3",
     top: "27vh",
     left: "84vw",
     clicked: state.clicked,
-    onClick: frame => events.put(frame)
+    onClick: frame => events.put(frame),
+    state: state
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     id: "bottom"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
@@ -225,30 +224,17 @@ function Game({
     left: "50vw",
     display: "none",
     onClick: () => events.take()
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_3__.Frame, {
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_2__.Frame, {
     id: "frame0",
     top: "10vh",
     left: "50vw",
     clicked: state.clicked,
-    onClick: frame => events.put(frame)
+    onClick: frame => events.put(frame),
+    state: state
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.ClickOnCardDeck, {
     state: state
   }));
 }
-function game(root) {
-  (0,_connection__WEBPACK_IMPORTED_MODULE_4__.subscribe)("/players/game/connect", () => (0,_connection__WEBPACK_IMPORTED_MODULE_4__.send)({}, "start"));
-  (0,_connection__WEBPACK_IMPORTED_MODULE_4__.subscribe)("/players/game/start", card => root.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(Game, {
-    common: card
-  })));
-  (0,_connection__WEBPACK_IMPORTED_MODULE_4__.send)({
-    id: 12
-  }, "connect");
-}
-// const root = createRoot(document.getElementById("root"))
-// root.render(
-//     <div>
-//         <button id={"start"} onClick={() => game(root)}>Start</button>
-//     </div>)
 
 /***/ }),
 
@@ -282,14 +268,14 @@ class Events {
     _subscriptions__WEBPACK_IMPORTED_MODULE_3__.MoveSubscriptions.state = state;
   }
   mouseEnterOnCardDeck(el) {
-    if (!this.state.clicked) {
+    if (!this.state.clicked && this.state.current === this.state.position) {
       el.target.style.border = "2px solid blue";
       el.target.style.top = "26vh";
       el.target.style.cursor = "pointer";
     }
   }
   mouseLeaveFromCardDeck(el) {
-    if (!this.state.clicked) {
+    if (!this.state.clicked && this.state.current === this.state.position) {
       el.target.style.border = "1px solid black";
       el.target.style.top = "27vh";
       el.target.style.cursor = "default";
@@ -297,15 +283,12 @@ class Events {
   }
   click(cardId) {
     let id = cardId.target.id;
-    if (!this.state.clicked) {
-      (0,_connection__WEBPACK_IMPORTED_MODULE_2__.send)({
-        card: id.substring(4)
-      }, "click");
-      (0,_cardManager__WEBPACK_IMPORTED_MODULE_1__.removeCard)(id);
-    }
+    if (!this.state.clicked && this.state.current === this.state.position) (0,_connection__WEBPACK_IMPORTED_MODULE_2__.send)({
+      cardPos: id.substring(4)
+    }, "click");
   }
   put(frame) {
-    if (this.state.clicked) {
+    if (this.state.clicked && this.state.current === this.state.position) {
       let id = frame.target.id.substring(5);
       (0,_connection__WEBPACK_IMPORTED_MODULE_2__.send)({
         player: id,
@@ -315,13 +298,13 @@ class Events {
     }
   }
   take() {
-    if (!this.state.clicked) {
+    if (!this.state.clicked && this.state.current === this.state.position) {
       (0,_connection__WEBPACK_IMPORTED_MODULE_2__.send)({}, "take");
     }
   }
 }
 function Frame(props) {
-  if (props.clicked) {
+  if (props.state.clicked && props.state.current === props.state.position) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       id: props.id,
       className: "card frame",
@@ -348,16 +331,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_dom_client__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom/client */ "./node_modules/react-dom/client.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-icons/fa */ "./node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-icons/fa */ "./node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var _utils_requests__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/requests */ "./src/main/resources/static/js/utils/requests.js");
 /* harmony import */ var _connection__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./connection */ "./src/main/resources/static/js/game/connection.js");
+/* harmony import */ var _distribution__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./distribution */ "./src/main/resources/static/js/game/distribution.js");
+
 
 
 
 
 
 function Game() {
-  const [startGame, setStartGame] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const [data, setData] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
     playerId: 0,
     gameId: 0,
@@ -382,6 +366,15 @@ function Game() {
           const players = JSON.parse(resp);
           setPlayers(players["players"]);
         });
+        (0,_connection__WEBPACK_IMPORTED_MODULE_3__.subscribe)("/players/game/start", data => {
+          data = JSON.parse(data);
+          root.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_distribution__WEBPACK_IMPORTED_MODULE_4__.Distribution, {
+            common: data["common"],
+            move: data["current"],
+            pos: data["position"],
+            count: data["count"]
+          }));
+        });
         (0,_connection__WEBPACK_IMPORTED_MODULE_3__.send)({
           playerId: text.playerId,
           gameId: text.gameId,
@@ -390,7 +383,7 @@ function Game() {
       });
     };
   }, []);
-  if (!startGame) return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     id: "main"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     id: "blur"
@@ -404,7 +397,8 @@ function Game() {
     id: "logic-buttons"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
     className: "logic-button start-button",
-    disabled: players.includes(null)
+    disabled: players.includes(null),
+    onClick: () => (0,_connection__WEBPACK_IMPORTED_MODULE_3__.send)({}, "/start")
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("b", null, "\u0421\u0442\u0430\u0440\u0442")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
     className: "logic-button leave-button",
     onClick: leave
@@ -427,7 +421,7 @@ function getViewPlayers(players, playerId) {
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       id: "user-clock",
       className: "center"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(react_icons_fa__WEBPACK_IMPORTED_MODULE_4__.FaUserClock, {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(react_icons_fa__WEBPACK_IMPORTED_MODULE_5__.FaUserClock, {
       size: 100
     }))));
   }
@@ -450,34 +444,57 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   MoveSubscriptions: () => (/* binding */ MoveSubscriptions)
 /* harmony export */ });
 /* harmony import */ var _connection__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./connection */ "./src/main/resources/static/js/game/connection.js");
+/* harmony import */ var _cardManager__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./cardManager */ "./src/main/resources/static/js/game/cardManager.js");
+
 
 class MoveSubscriptions {
   static state;
-  static setSubscriptions(setState) {
-    (0,_connection__WEBPACK_IMPORTED_MODULE_0__.subscribe)("/players/game/click", card => {
-      setState({
+  static setSubscriptions(setState, count) {
+    (0,_connection__WEBPACK_IMPORTED_MODULE_0__.subscribe)("/players/game/click", data => {
+      data = JSON.parse(data);
+      setState(prevState => ({
+        ...prevState,
         clicked: true,
-        clickedCard: card
-      }); //клик по карте в колоде
+        clickedCard: data["card"]
+      })); //клик по карте в колоде
+      (0,_cardManager__WEBPACK_IMPORTED_MODULE_1__.removeCard)(data["cardPos"]);
     });
-    (0,_connection__WEBPACK_IMPORTED_MODULE_0__.subscribe)("/players/game/put", id => {
-      let playerCard = document.getElementById(id); //положить в чью-то колоду
+    (0,_connection__WEBPACK_IMPORTED_MODULE_0__.subscribe)("/players/game/put", data => {
+      data = JSON.parse(data);
+      const finalPos = getRelativeDeck(data["gamePos"], this.state.position, count);
+      const playerCard = document.getElementById(String(finalPos)); //положить в чью-то колоду
       playerCard.style.display = "";
       playerCard.src = `../../images/${this.state.clickedCard}.png`;
-      setState({
+      if (data["gamePos"] - this.state.current === 0) setState(prevState => ({
+        ...prevState,
+        current: (this.state.current + 1) % count
+      }));
+      setState(prevState => ({
+        ...prevState,
         clicked: false,
         clickedCard: null
-      });
+      }));
     });
-    (0,_connection__WEBPACK_IMPORTED_MODULE_0__.subscribe)("/players/game/take", msg => {
+    (0,_connection__WEBPACK_IMPORTED_MODULE_0__.subscribe)("/players/game/take", data => {
       //взять карту из своей колоды
-      const text = JSON.parse(msg);
-      setState({
+      data = JSON.parse(data);
+      const finalPos = getRelativeDeck(this.state.current, this.state.position, count);
+      const deck = document.getElementById(finalPos);
+      setState(prevState => ({
+        ...prevState,
         clicked: true,
-        clickedCard: text["card"]
-      });
-      if (text["subCard"] === "none") document.getElementById("0").style.display = "none";else document.getElementById("0").src = `../../images/${text["subCard"]}.png`;
+        clickedCard: data["card"]
+      }));
+      if (data["subCard"] === "none") deck.style.display = "none";else deck.src = `../../images/${data["subCard"]}.png`;
     });
+    function getRelativeDeck(gamePos, position, count) {
+      let finalPos;
+      if (gamePos === 3) finalPos = 3;else {
+        finalPos = gamePos - position;
+        finalPos = finalPos === -1 ? count - 1 : finalPos;
+      }
+      return finalPos;
+    }
   }
 }
 
@@ -47130,8 +47147,8 @@ module.exports = JSON.parse('{"name":"websocket","description":"Websocket Client
 /******/ 	
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	__webpack_require__("./src/main/resources/static/js/game/distribution.js");
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	__webpack_require__("./src/main/resources/static/js/game/distribution.js");
 /******/ 	__webpack_require__("./src/main/resources/static/js/game/cardManager.js");
 /******/ 	__webpack_require__("./src/main/resources/static/js/game/events.js");
 /******/ 	__webpack_require__("./src/main/resources/static/js/game/connection.js");

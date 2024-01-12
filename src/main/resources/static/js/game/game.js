@@ -3,9 +3,9 @@ import {createRoot} from "react-dom/client";
 import { FaUserClock } from "react-icons/fa";
 import {ajax} from "../utils/requests";
 import {send, subscribe, webSocketGameConnect} from "./connection";
+import {Distribution} from "./distribution";
 
 function Game() {
-    const [startGame, setStartGame] = useState(false)
     const [data, setData] = useState({
         playerId: 0,
         gameId: 0,
@@ -32,26 +32,29 @@ function Game() {
                     const players = JSON.parse(resp)
                     setPlayers(players["players"])
                 })
+                subscribe("/players/game/start", (data) => {
+                    data = JSON.parse(data)
+                    root.render(<Distribution common={data["common"]} move={data["current"]} pos={data["position"]} count={data["count"]}/>)
+                })
                 send({playerId: text.playerId, gameId: text.gameId, name: text.name}, "connect")
             })
         }
     }, [])
 
-    if (!startGame)
-        return (<div id={"main"}>
-            <div id={"blur"}></div>
-            <div id={"waiting-window"} className={"center"}>
-                <h1>ID игры: {data.gameId}</h1>
-                <div id={"connected-players"} className={"center"}>
-                    {getViewPlayers(players, data.playerId).map((e) => e)}
-                </div>
-                <div id={"logic-buttons"}>
-                    <button className={"logic-button start-button"} disabled={players.includes(null)}><b>Старт</b></button>
-                    <button className={"logic-button leave-button"} onClick={leave}><b>Покинуть</b></button>
-                </div>
-
+    return (<div id={"main"}>
+        <div id={"blur"}></div>
+        <div id={"waiting-window"} className={"center"}>
+            <h1>ID игры: {data.gameId}</h1>
+            <div id={"connected-players"} className={"center"}>
+                {getViewPlayers(players, data.playerId).map((e) => e)}
             </div>
-        </div>)
+            <div id={"logic-buttons"}>
+                <button className={"logic-button start-button"} disabled={players.includes(null)} onClick={() => send({}, "/start")}>
+                    <b>Старт</b></button>
+                <button className={"logic-button leave-button"} onClick={leave}><b>Покинуть</b></button>
+            </div>
+        </div>
+    </div>)
 }
 
 function getViewPlayers(players, playerId) {
