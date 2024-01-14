@@ -24,11 +24,11 @@ public class Game {
     @Column(name = "current")
     private int current;
 
-    @OneToMany(mappedBy = "game", cascade = CascadeType.MERGE)
-    private List<Player> players = new LinkedList<>();
-
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<GameCard> gameDecks = new LinkedList<>();
+
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<PlayerProps> playerProps = new LinkedList<>();
 
     public Game() {}
 

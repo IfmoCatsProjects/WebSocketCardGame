@@ -4,13 +4,16 @@ import jakarta.servlet.http.HttpSession;
 import lombok.NoArgsConstructor;
 import org.ioanntar.webproject.database.entities.Game;
 import org.ioanntar.webproject.database.entities.Player;
+import org.ioanntar.webproject.database.entities.PlayerProps;
 import org.ioanntar.webproject.database.utils.Database;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class GameConnector {
@@ -20,7 +23,7 @@ public class GameConnector {
     public void create(HttpSession session, int count) {
         Game game = database.merge(new Game(count));
         Player player = database.get(Player.class, (long) session.getAttribute("playerId"));
-        player.setGame(game);
+        player.setPlayerProps(new PlayerProps(player, game));
 
         database.commit();
 
@@ -30,26 +33,24 @@ public class GameConnector {
     public Game exit(SimpMessageHeaderAccessor sha) {
         long playerId = (long) sha.getSessionAttributes().get("playerId");
         Game game = database.get(Game.class, (long) sha.getSessionAttributes().get("gameId"));
-        Player player = database.get(Player.class, playerId);
-        if(game.getPlayers().size() == 1)
+        PlayerProps player = database.get(PlayerProps.class, playerId);
+        if(game.getPlayerProps().size() == 1)
             database.delete(game);
 
-        player.setGame(null);
+        database.delete(player);
         database.commit();
-        game.getPlayers().removeIf(p -> p.getId() == playerId);
         return game;
     }
 
     public JSONObject bind(Game game) {
         List<JSONObject> playersList = new LinkedList<>();
-        List<Player> players = game.getPlayers();
-        for (Player player: players) {
-            JSONObject jsonPlayers = new JSONObject();
-            jsonPlayers.put("name", player.getName());
-            jsonPlayers.put("playerId", player.getId());
-            jsonPlayers.put("rating", player.getRating());
-            jsonPlayers.put("weight", player.getWeight());
+        List<PlayerProps> players = game.getPlayerProps();
+        players.sort(Comparator.comparing(PlayerProps::getPosition));
 
+        for (PlayerProps player: players) {
+            JSONObject jsonPlayers = new JSONObject();
+            jsonPlayers.put("name", player.getPlayer().getName()).put("playerId", player.getPlayer().getId())
+                    .put("playerId", player.getPlayer().getId());
             playersList.add(jsonPlayers);
         }
 
@@ -57,7 +58,7 @@ public class GameConnector {
             playersList.add(null);
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("players", new JSONArray(playersList));
+        jsonObject.put("players", new JSONArray(playersList)).put("gameId", game.getId());
         return jsonObject;
     }
 
@@ -69,12 +70,12 @@ public class GameConnector {
         if (game == null) {
             jsonObject.put("status", "not found");
             return jsonObject.toString();
-        } else if (game.getPlayers().size() == game.getCount()) {
+        } else if (game.getPlayerProps().size() == game.getCount()) {
             jsonObject.put("status", "full");
             return jsonObject.toString();
         }
 
-        player.setGame(game);
+        player.setPlayerProps(new PlayerProps(player, game));
         database.commit();
         session.setAttribute("gameId", gameId);
         jsonObject.put("status", "ok");
@@ -83,12 +84,12 @@ public class GameConnector {
 
     public Game connectToGame(String data, SimpMessageHeaderAccessor sha) {
         JSONObject jsonObject = new JSONObject(data);
-        Player player = database.get(Player.class, jsonObject.getLong("playerId"));
+        PlayerProps player = database.get(PlayerProps.class, jsonObject.getLong("playerId"));
         Game game = player.getGame();
-        player.setPosition(game.getPlayers().size() - 1);
+        player.setPosition(game.getPlayerProps().size() - 1);
         database.commit();
 
-        sha.getSessionAttributes().put("playerId", player.getId());
+        sha.getSessionAttributes().put("playerId", player.getPlayer().getId());
         sha.getSessionAttributes().put("gameId", jsonObject.getLong("gameId"));
 
         return game;

@@ -24,7 +24,7 @@ public class HttpRequest {
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("playerId", player.getId());
-        jsonObject.put("gameId", player.getGame() != null ? player.getGame().getId() : null);
+        jsonObject.put("gameId", player.getPlayerProps() != null ? player.getPlayerProps().getGame().getId() : null);
         jsonObject.put("email", player.getEmail());
         jsonObject.put("name", player.getName());
         jsonObject.put("rating", player.getRating());

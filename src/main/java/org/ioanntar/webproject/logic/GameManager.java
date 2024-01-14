@@ -24,7 +24,7 @@ public class GameManager {
         //-------------------------------------------------------------------
         Game prevGame = database.get(Game.class, id - 1);//TODO временная очистка всех игр
         try {
-            for (Player player: prevGame.getPlayers()) {
+            for (PlayerProps player: prevGame.getPlayerProps()) {
                 player.getPlayersDeck().clear();
             }
             database.delete(prevGame);
@@ -68,8 +68,8 @@ public class GameManager {
             game.getGameDecks().add(new GameCard(game, DeckType.COMMON, card, commonSize));
         } else {
             put = (game.getCurrent() + playerPut) % game.getCount();
-            Player player = game.getPlayers().stream().filter(p -> p.getPosition() == put).findFirst().get();
-            player.getPlayersDeck().add(new PlayerCard(player, card, player.getPlayersDeck().size()));
+            PlayerProps player = game.getPlayerProps().stream().filter(p -> p.getPosition() == put).findFirst().get();
+            player.getPlayersDeck().add(new PlayerCard(player, card, DeckType.OPENED, player.getPlayersDeck().size()));
         }
         new Response(game, template).sendToPlayers("put", new JSONObject().put("gamePos", put));
 
@@ -80,7 +80,7 @@ public class GameManager {
 
     public void take() {
         long id = (long) sha.getSessionAttributes().get("playerId");
-        Player player = database.get(Player.class, id);
+        PlayerProps player = database.get(Player.class, id);
 
         List<PlayerCard> deck = player.getPlayersDeck();
         String card = deck.get(deck.size() - 1).getCard();
@@ -89,5 +89,14 @@ public class GameManager {
 
         database.commit();
         new Response(player.getGame(), template).sendToPlayers("take", new JSONObject().put("card", card).put("subCard", subCard));
+    }
+
+    public void turn() {
+        long id = (long) sha.getSessionAttributes().get("playerId");
+        PlayerProps player = database.get(PlayerProps.class, id);
+        player.getPlayersDeck().forEach(p -> p.setType(DeckType.CLOSED));
+        database.commit();
+
+        new Response(player.getGame(), template).sendToPlayers("turn", new JSONObject());
     }
 }

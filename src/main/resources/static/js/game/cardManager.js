@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 
 export function Card(props){
-    return (<img id={props.id} className={"card"} style={{top: props.top,
-        left: props.left, display: props.display}} src={`../../images/${props.image}.png`}
+    return (<img id={props.id} className={"card " + props.className} style={{top: props.top,
+        left: props.left, display: props.display}} src={`../images/${props.image}.png`}
         onClick={props.onClick}
         onMouseEnter={props.onMouseEnter}
         onMouseLeave={props.onMouseLeave}/>)
@@ -39,4 +39,15 @@ export function ClickOnCardDeck({state}) {
 export function removeCard(id) {
     let element = document.getElementById(id)
     element.parentElement.removeChild(element)
+}
+
+export function getRelativeDeck(gamePos, position, count) {
+    let finalPos
+    if (gamePos === 3)
+        finalPos = 3
+    else {
+        finalPos = gamePos - position
+        finalPos = finalPos < 0 ? count + finalPos : finalPos
+    }
+    return finalPos
 }

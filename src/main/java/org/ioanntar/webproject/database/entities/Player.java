@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.LinkedList;
-import java.util.List;
-
 @Data
 @EqualsAndHashCode(of = "id")
 @Entity
@@ -21,9 +18,6 @@ public class Player {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "position")
-    private Integer position;
-
     @Column(name = "email")
     private String email;
 
@@ -36,12 +30,8 @@ public class Player {
     @Column(name = "rating")
     private int rating;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "game_id")
-    private Game game;
-
-    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlayerCard> playersDeck = new LinkedList<>();
+    @OneToOne(mappedBy = "player", cascade = CascadeType.ALL)
+    private PlayerProps playerProps;
 
     public Player() {}
 

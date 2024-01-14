@@ -1,10 +1,11 @@
 import {subscribe} from "./connection";
-import {removeCard} from "./cardManager";
+import {getRelativeDeck, removeCard} from "./cardManager";
 
 export class MoveSubscriptions {
     static state
+    static display
 
-    static setSubscriptions(setState, count) {
+    static setSubscriptions(setState, setDisplays, count) {
         subscribe("/players/game/click", (data) => {
             data = JSON.parse(data)
             setState(prevState => ({...prevState, clicked: true, clickedCard: data["card"]}))    //клик по карте в колоде
@@ -37,16 +38,21 @@ export class MoveSubscriptions {
                 deck.src = `../../images/${data["subCard"]}.png`
         })
 
-        function getRelativeDeck(gamePos, position, count) {
-            let finalPos
-            if (gamePos === 3)
-                finalPos = 3
-            else {
-                finalPos = gamePos - position
-                finalPos = finalPos === -1 ? count - 1 : finalPos
-            }
-            return finalPos
-        }
+        subscribe("/players/game/turn", () => {
+            const finalPos = getRelativeDeck(this.state.current, this.state.position, count)
+            this.display.upsideCard[finalPos] = true
+            setDisplays({upsideCard: this.display.upsideCard})
+            document.getElementById(finalPos).style.display = "none"
+        })
 
+        subscribe("/players/game/clickOnPlayerDeck", (data) => {
+            data = JSON.parse(data)
+            setState(prevState => ({...prevState, clicked: true, clickedCard: data["card"]}))    //клик по карте в перевернутой колоде игрока
+            const finalPos = getRelativeDeck(this.state.current, this.state.position, count)
+            if (data["last"]) {
+                this.display.upsideCard[finalPos] = false
+                setDisplays({upsideCard: this.display.upsideCard})
+            }
+        })
     }
 }

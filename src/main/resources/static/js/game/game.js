@@ -14,6 +14,7 @@ function Game() {
         weight: 0,
         rating: 0
     })
+    const [gameId, setGameId] = useState(0)
     const [players, setPlayers] = useState([])
 
     const leave = () => {
@@ -34,7 +35,7 @@ function Game() {
                 })
                 subscribe("/players/game/start", (data) => {
                     data = JSON.parse(data)
-                    root.render(<Distribution common={data["common"]} move={data["current"]} pos={data["position"]} count={data["count"]}/>)
+                    root.render(<Distribution common={data["common"]} move={data["current"]} pos={data["position"]} players={data["players"]}/>)
                 })
                 send({playerId: text.playerId, gameId: text.gameId, name: text.name}, "connect")
             })

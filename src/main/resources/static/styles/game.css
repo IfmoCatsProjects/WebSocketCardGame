@@ -156,3 +156,24 @@ img.hidden {
     margin-top: 50%;
     transform: translateX(-50%) translateY(-50%);
 }
+
+.game-name {
+    position: absolute;
+    background: wheat;
+    border-radius: 10px;
+    border: 1px solid black;
+}
+
+#flip-over {
+    position: absolute;
+    transform: translateX(-50%) translateY(-50%);
+    height: 30px;
+    left: 50%;
+    top: -20%;
+    background: wheat;
+    font-weight: bold;
+}
+
+#flip-over:hover {
+    background: white;
+}

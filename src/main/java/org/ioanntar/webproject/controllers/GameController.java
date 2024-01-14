@@ -56,4 +56,9 @@ public class GameController {
     public void take(SimpMessageHeaderAccessor sha) {
         new GameManager(sha, template).take();
     }
+
+    @MessageMapping("/turn")
+    public void turn(SimpMessageHeaderAccessor sha) {
+        new GameManager(sha, template).turn();
+    }
 }

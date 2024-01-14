@@ -3,6 +3,9 @@ package org.ioanntar.webproject.modules;
 import lombok.ToString;
 import org.ioanntar.webproject.database.entities.Game;
 import org.ioanntar.webproject.database.entities.Player;
+import org.ioanntar.webproject.database.entities.PlayerProps;
+import org.ioanntar.webproject.logic.GameConnector;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
@@ -18,15 +21,16 @@ public class Response {
     }
 
     public void sendToPlayers(String destination, JSONObject response) {
-        for (Player player: game.getPlayers())
-            template.convertAndSendToUser(String.valueOf(player.getId()), "/game/" + destination, response.toString());
+        for (PlayerProps player: game.getPlayerProps())
+            template.convertAndSendToUser(String.valueOf(player.getPlayer().getId()), "/game/" + destination, response.toString());
     }
 
     public void sendStart(String card) {
-        JSONObject response = new JSONObject().put("common", card).put("current", game.getCurrent()).put("count", game.getCount());
-        for (Player player: game.getPlayers()) {
+        JSONArray players = new GameConnector().bind(game).getJSONArray("players");
+        JSONObject response = new JSONObject().put("common", card).put("current", game.getCurrent()).put("players", players);
+        for (PlayerProps player: game.getPlayerProps()) {
             response.put("position", player.getPosition());
-            template.convertAndSendToUser(String.valueOf(player.getId()), "/game/start", response.toString());
+            template.convertAndSendToUser(String.valueOf(player.getPlayer().getId()), "/game/start", response.toString());
         }
     }
 }

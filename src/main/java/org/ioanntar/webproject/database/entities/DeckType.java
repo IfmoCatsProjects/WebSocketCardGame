@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum DeckType {
-    DISTRIBUTION("DISTRIBUTION"), COMMON("COMMON");
+    DISTRIBUTION("DISTRIBUTION"), COMMON("COMMON"), OPENED("OPENED"), CLOSED("CLOSED");
 
     private final String type;
 

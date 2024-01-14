@@ -39,7 +39,6 @@ class Events {
         if (this.state.clicked && this.state.current === this.state.position) {
             let id = frame.target.id.substring(5)
             send({player: id, card: this.state.clickedCard}, "put")
-            console.log(this.state)
         }
     }
 
@@ -47,6 +46,15 @@ class Events {
         if (!this.state.clicked && this.state.current === this.state.position) {
             send({}, "take")
         }
+    }
+
+    isTurn() {
+        return document.querySelectorAll(".deck").length === 0 && this.state.position === 0
+            && document.getElementById("upside0") === null && this.state.clickedCard === null;
+    }
+
+    turn() {
+        send({}, "turn")
     }
 }
 

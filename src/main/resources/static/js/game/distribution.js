@@ -1,23 +1,28 @@
 import React, {useEffect, useState} from "react";
-import {Card, ClickOnCardDeck} from "./cardManager";
+import {Card, ClickOnCardDeck, getRelativeDeck} from "./cardManager";
 import Events, {Frame} from "./events";
 import {send} from "./connection";
 import {MoveSubscriptions} from "./subscriptions";
 
-export function Distribution({common, move, pos, count}) {
+export function Distribution({common, move, pos, players}) {
     const [state, setState] = useState({
         clicked: false,
         clickedCard: null,
         current: move,
-        position: pos
+        position: pos,
+    })
+    const [turn, setTurn] = useState(false)
+    const [displays, setDisplays] = useState({
+        upsideCard: [false, false, false]
     })
     const events = new Events(state, setState)
+    MoveSubscriptions.display = displays
 
     const createDeck = () => {
         let cards = []
         let offset = 21
-        for (let i = 0; i < 35; i++) {
-            cards.push(<Card id={"card" + i} image={"shirt"} top={"27vh"} left={`${offset}vw`}
+        for (let i = 0; i < 2; i++) {
+            cards.push(<Card id={"card" + i} className={"deck"} image={"shirt"} top={"50%"} left={`${offset}%`}
              onClick={(el) => events.click(el)}
              onMouseEnter={(el) => events.mouseEnterOnCardDeck(el)}
              onMouseLeave={(el) => events.mouseLeaveFromCardDeck(el)}/>)
@@ -26,30 +31,42 @@ export function Distribution({common, move, pos, count}) {
         return cards
     }
 
-    useEffect(() => MoveSubscriptions.setSubscriptions(setState, count), [])
+    useEffect(() => MoveSubscriptions.setSubscriptions(setState, setDisplays, players.length),[])
+    useEffect(() => setTurn(events.isTurn()), [state.clickedCard])
 
     return (
         <div id={"main"}>
             <div id={"top"}>
                 <button onClick={(el) => {send({}, "close", true, () => {}); el.target.disabled = true}}>Stop</button>
 
-                <Card id={"1"} image={"shirt"} top={"12vh"} left={"50vw"} display={"none"} />
-                <Frame id={"frame1"} top={"12vh"} left={"50vw"} clicked={state.clicked} onClick={(frame) => events.put(frame)} state={state}/>
+                {displays.upsideCard[1] ? <Card id={"upside1"} image={"shirt"} top={"55%"} left={"40%"}/> : ""}
+                <Card id={"1"} image={"shirt"} top={"55%"} left={"50%"} display={"none"} />
+                <Frame id={"frame1"} top={"55%"} left={"50%"} clicked={state.clicked} onClick={(frame) => events.put(frame)} state={state}/>
+                <h2 className={"game-name"} style={{left: "57%", top: "0%"}}>{players[(pos + 1) % players.length]["name"]}</h2>
             </div>
             <div id={"center"}>
-                {count === 3 ? <Card id={"2"} image={"shirt"} top={"27vh"} left={"5vw"} display={"none"} /> : ""}
-                {count === 3 ? <Frame id={"frame2"} top={"27vh"} left={"5vw"} clicked={state.clicked} onClick={(frame) => events.put(frame)}
-                                      state={state}/> : ""}
+                {players.length === 3 ? <div>
+                    <h2 className={"game-name"} style={{left: "1%", top: "10%"}}>{players[(pos + 2) % players.length]["name"]}</h2>
+
+                    {displays.upsideCard[2] ? <Card id={"2"} image={"shirt"} top={"50%"} left={"5%"} /> : ""}
+                    <Frame id={"frame2"} top={"50%"}
+                       left={"5%"} clicked={state.clicked} onClick={(frame) => events.put(frame)} state={state}/>
+                    <Card id={"upside2"} image={"shirt"} top={"95%"} left={"5%"} display={"none"}/>
+                </div> : ""}
                 {createDeck().map((e) => e)}
 
-                <Card id={"3"} image={common} top={"27vh"} left={"84vw"} />
-                <Frame id={"frame3"} top={"27vh"} left={"84vw"} clicked={state.clicked} onClick={(frame) => events.put(frame)} state={state}/>
+                <Card id={"3"} image={common} top={"50%"} left={"84%"} />
+                <Frame id={"frame3"} top={"50%"} left={"84%"} clicked={state.clicked} onClick={(frame) => events.put(frame)} state={state}/>
             </div>
             <div id={"bottom"}>
-                <Card id={"0"} image={"shirt"} top={"10vh"} left={"50vw"} display={"none"} onClick={() => events.take()}/>
-                <Frame id={"frame0"} top={"10vh"} left={"50vw"} clicked={state.clicked} onClick={(frame) => events.put(frame)} state={state}/>
+                {turn ? <button id={"flip-over"} onClick={() => {events.turn(); setTurn(false)}}>Перевернуть</button> : ""}
+
+                {displays.upsideCard[0] ? <Card id={"upside0"} image={"shirt"} top={"46%"} left={"40%"}/> : ""}
+                <Card id={"0"} image={"shirt"} top={"46%"} left={"50%"} display={"none"} onClick={() => events.take()}/>
+                <Frame id={"frame0"} top={"10vh"} left={"50%"} clicked={state.clicked} onClick={(frame) => events.put(frame)} state={state}/>
+
+                <h2 className={"game-name"} style={{left: "57%"}}>{players[pos].name}</h2>
             </div>
             <ClickOnCardDeck state={state}/>
-        </div>
-        )
+        </div>)
 }
