@@ -61,4 +61,9 @@ public class GameController {
     public void turn(SimpMessageHeaderAccessor sha) {
         new GameManager(sha, template).turn();
     }
+
+    @MessageMapping("/clickOnPlayerDeck")
+    public void clickOnPlayerDeck(SimpMessageHeaderAccessor sha) {
+        new GameManager(sha, template).clickOnPlayerDeck();
+    }
 }

@@ -30,7 +30,8 @@ public class Player {
     @Column(name = "rating")
     private int rating;
 
-    @OneToOne(mappedBy = "player", cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "id")
     private PlayerProps playerProps;
 
     public Player() {}

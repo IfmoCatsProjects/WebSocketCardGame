@@ -23,8 +23,7 @@ public class GameConnector {
     public void create(HttpSession session, int count) {
         Game game = database.merge(new Game(count));
         Player player = database.get(Player.class, (long) session.getAttribute("playerId"));
-        player.setPlayerProps(new PlayerProps(player, game));
-
+        database.merge(new PlayerProps(player.getId(), game));
         database.commit();
 
         session.setAttribute("gameId", game.getId());
@@ -33,28 +32,29 @@ public class GameConnector {
     public Game exit(SimpMessageHeaderAccessor sha) {
         long playerId = (long) sha.getSessionAttributes().get("playerId");
         Game game = database.get(Game.class, (long) sha.getSessionAttributes().get("gameId"));
-        PlayerProps player = database.get(PlayerProps.class, playerId);
-        if(game.getPlayerProps().size() == 1)
-            database.delete(game);
+        Player player = database.get(Player.class, playerId);
 
-        database.delete(player);
+        game.getPlayerProps().remove(player.getPlayerProps());
+        database.delete(player.getPlayerProps());
+        if (game.getPlayerProps().size() == 0) {
+            database.delete(game);
+        }
+
         database.commit();
         return game;
     }
 
     public JSONObject bind(Game game) {
         List<JSONObject> playersList = new LinkedList<>();
-        List<PlayerProps> players = game.getPlayerProps();
-        players.sort(Comparator.comparing(PlayerProps::getPosition));
+        List<PlayerProps> playerPropsList = game.getPlayerProps();
+        playerPropsList.sort(Comparator.comparing(PlayerProps::getPosition));
 
-        for (PlayerProps player: players) {
+        for (PlayerProps playerProps: playerPropsList) {
             JSONObject jsonPlayers = new JSONObject();
-            jsonPlayers.put("name", player.getPlayer().getName()).put("playerId", player.getPlayer().getId())
-                    .put("playerId", player.getPlayer().getId());
+            jsonPlayers.put("name", playerProps.getPlayer().getName()).put("playerId", playerProps.getPlayerId());
             playersList.add(jsonPlayers);
         }
-
-        for(int i = 0; i < game.getCount() - players.size(); i++)
+        for(int i = 0; i < game.getCount() - playerPropsList.size(); i++)
             playersList.add(null);
 
         JSONObject jsonObject = new JSONObject();
@@ -75,7 +75,7 @@ public class GameConnector {
             return jsonObject.toString();
         }
 
-        player.setPlayerProps(new PlayerProps(player, game));
+        database.merge(new PlayerProps(player.getId(), game));
         database.commit();
         session.setAttribute("gameId", gameId);
         jsonObject.put("status", "ok");
@@ -89,7 +89,7 @@ public class GameConnector {
         player.setPosition(game.getPlayerProps().size() - 1);
         database.commit();
 
-        sha.getSessionAttributes().put("playerId", player.getPlayer().getId());
+        sha.getSessionAttributes().put("playerId", player.getPlayerId());
         sha.getSessionAttributes().put("gameId", jsonObject.getLong("gameId"));
 
         return game;

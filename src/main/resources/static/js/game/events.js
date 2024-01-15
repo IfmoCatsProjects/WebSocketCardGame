@@ -1,5 +1,4 @@
 import React from "react";
-import {removeCard} from "./cardManager";
 import {send} from "./connection";
 import {MoveSubscriptions} from "./subscriptions";
 
@@ -14,18 +13,16 @@ class Events {
     }
 
     mouseEnterOnCardDeck(el) {
+        const style = el.target.style
         if (!this.state.clicked && this.state.current === this.state.position) {
-            el.target.style.border = "2px solid blue"
-            el.target.style.top = "26vh"
-            el.target.style.cursor = "pointer"
+            style.top = `${parseInt(style.top) - 2}%`
         }
     }
 
     mouseLeaveFromCardDeck(el) {
+        const style = el.target.style
         if (!this.state.clicked && this.state.current === this.state.position) {
-            el.target.style.border = "1px solid black"
-            el.target.style.top = "27vh"
-            el.target.style.cursor = "default"
+            style.top = `${parseInt(style.top) + 2}%`
         }
     }
 
@@ -49,12 +46,16 @@ class Events {
     }
 
     isTurn() {
-        return document.querySelectorAll(".deck").length === 0 && this.state.position === 0
+        return document.querySelectorAll(".deck").length === 0 && this.state.current === this.state.position
             && document.getElementById("upside0") === null && this.state.clickedCard === null;
     }
 
     turn() {
         send({}, "turn")
+    }
+
+    clickOnPlayerDeck() {
+        send({}, "clickOnPlayerDeck")
     }
 }
 

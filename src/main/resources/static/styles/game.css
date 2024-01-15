@@ -177,3 +177,10 @@ img.hidden {
 #flip-over:hover {
     background: white;
 }
+
+.your-move {}
+
+.your-move:hover {
+    border: 2px solid blue;
+    cursor: pointer;
+}

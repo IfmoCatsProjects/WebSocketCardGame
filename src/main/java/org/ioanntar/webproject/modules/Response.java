@@ -22,7 +22,7 @@ public class Response {
 
     public void sendToPlayers(String destination, JSONObject response) {
         for (PlayerProps player: game.getPlayerProps())
-            template.convertAndSendToUser(String.valueOf(player.getPlayer().getId()), "/game/" + destination, response.toString());
+            template.convertAndSendToUser(String.valueOf(player.getPlayerId()), "/game/" + destination, response.toString());
     }
 
     public void sendStart(String card) {
@@ -30,7 +30,7 @@ public class Response {
         JSONObject response = new JSONObject().put("common", card).put("current", game.getCurrent()).put("players", players);
         for (PlayerProps player: game.getPlayerProps()) {
             response.put("position", player.getPosition());
-            template.convertAndSendToUser(String.valueOf(player.getPlayer().getId()), "/game/start", response.toString());
+            template.convertAndSendToUser(String.valueOf(player.getPlayerId()), "/game/start", response.toString());
         }
     }
 }

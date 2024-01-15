@@ -51,3 +51,21 @@ export function getRelativeDeck(gamePos, position, count) {
     }
     return finalPos
 }
+
+export function setYourMove(state, count) {
+    for (let i = 0; i < count; i++) {
+        const moveColor = document.getElementById("name" + i).style
+        if (i === getRelativeDeck(state.current, state.position, count)) {
+            moveColor.background = "green"
+            moveColor.color = "white"
+        } else {
+            moveColor.background = "wheat"
+            moveColor.color = "black"
+        }
+    }
+
+    if (state.current === state.position && !state.clicked)
+        document.querySelectorAll(".click-card").forEach(e => e.classList.add("your-move"))
+    else
+        document.querySelectorAll(".click-card").forEach(e => e.classList.remove("your-move"))
+}

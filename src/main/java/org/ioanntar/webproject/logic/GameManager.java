@@ -7,6 +7,9 @@ import org.json.JSONObject;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class GameManager {
@@ -21,17 +24,6 @@ public class GameManager {
 
     public void start() {
         long id = (long) sha.getSessionAttributes().get("gameId");
-        //-------------------------------------------------------------------
-        Game prevGame = database.get(Game.class, id - 1);//TODO временная очистка всех игр
-        try {
-            for (PlayerProps player: prevGame.getPlayerProps()) {
-                player.getPlayersDeck().clear();
-            }
-            database.delete(prevGame);
-        } catch (NullPointerException ignored) {}
-        //-------------------------------------------------------------------
-        database.commit();
-        database = new Database();
         Game game = database.get(Game.class, id);
 
         List<GameCard> gameDeck = GenerateDeck.generate(game);
@@ -49,7 +41,8 @@ public class GameManager {
     public void click(int cardPosition) {
         long id = (long) sha.getSessionAttributes().get("gameId");
         Game game = database.get(Game.class, id);
-        GameCard card = game.getGameDecks().stream().filter(c -> c.getPosition() == cardPosition).findFirst().get();
+        GameCard card = game.getGameDecks().stream().filter(c -> c.getType() == DeckType.DISTRIBUTION && c.getPosition() == cardPosition)
+                .findFirst().get();
 
         new Response(game, template).sendToPlayers("click", new JSONObject().put("card", card.getCard()).put("cardPos",
                 "card" + cardPosition));
@@ -61,34 +54,45 @@ public class GameManager {
         long id = (long) sha.getSessionAttributes().get("gameId");
         Game game = database.get(Game.class, id);
         int put;
+        long a;
 
         if (playerPut == 3) {
             put = playerPut;
             int commonSize = game.getGameDecks().stream().filter(g -> g.getType() == DeckType.COMMON).toList().size();
+            a = commonSize;
             game.getGameDecks().add(new GameCard(game, DeckType.COMMON, card, commonSize));
         } else {
             put = (game.getCurrent() + playerPut) % game.getCount();
             PlayerProps player = game.getPlayerProps().stream().filter(p -> p.getPosition() == put).findFirst().get();
-            player.getPlayersDeck().add(new PlayerCard(player, card, DeckType.OPENED, player.getPlayersDeck().size()));
+
+            long openedPosition = player.getPlayersDeck().stream().filter(p -> p.getType() == DeckType.OPENED).count();
+            a = openedPosition;
+            player.getPlayersDeck().add(new PlayerCard(player, card, DeckType.OPENED, (int) openedPosition));
         }
         new Response(game, template).sendToPlayers("put", new JSONObject().put("gamePos", put));
 
         if (playerPut == 0)
             game.setCurrent((game.getCurrent() + 1) % (game.getCount()));
-        database.commit();
+
+        try {
+            database.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void take() {
         long id = (long) sha.getSessionAttributes().get("playerId");
-        PlayerProps player = database.get(Player.class, id);
+        PlayerProps player = database.get(PlayerProps.class, id);
 
-        List<PlayerCard> deck = player.getPlayersDeck();
-        String card = deck.get(deck.size() - 1).getCard();
-        deck.remove(deck.size() - 1);
-        String subCard = deck.size() != 0 ? deck.get(deck.size() - 1).getCard() : "none";
+        List<PlayerCard> deck = new ArrayList<>(player.getPlayersDeck().stream().filter(c -> c.getType() == DeckType.OPENED).toList());
+        deck.sort(Comparator.comparing(PlayerCard::getPosition));
+        PlayerCard card = deck.get(deck.size() - 1);
+        player.getPlayersDeck().remove(card);
+        String subCard = deck.size() != 1 ? deck.get(deck.size() - 2).getCard() : "none";
 
         database.commit();
-        new Response(player.getGame(), template).sendToPlayers("take", new JSONObject().put("card", card).put("subCard", subCard));
+        new Response(player.getGame(), template).sendToPlayers("take", new JSONObject().put("card", card.getCard()).put("subCard", subCard));
     }
 
     public void turn() {
@@ -98,5 +102,19 @@ public class GameManager {
         database.commit();
 
         new Response(player.getGame(), template).sendToPlayers("turn", new JSONObject());
+    }
+
+    public void clickOnPlayerDeck() {
+        long id = (long) sha.getSessionAttributes().get("playerId");
+        PlayerProps player = database.get(PlayerProps.class, id);
+
+        List<PlayerCard> closeCards = new ArrayList<>(player.getPlayersDeck().stream().filter(p -> p.getType() == DeckType.CLOSED).toList());
+        PlayerCard card = closeCards.stream().min(Comparator.comparing(PlayerCard::getPosition)).get();
+        player.getPlayersDeck().remove(card);
+
+        JSONObject jsonObject = new JSONObject().put("card", card.getCard()).put("last", closeCards.size() - 1 == 0);
+        database.commit();
+
+        new Response(player.getGame(), template).sendToPlayers("clickOnPlayerDeck", jsonObject);
     }
 }

@@ -14,13 +14,14 @@ function Game() {
         weight: 0,
         rating: 0
     })
-    const [gameId, setGameId] = useState(0)
     const [players, setPlayers] = useState([])
 
     const leave = () => {
-        send({}, "/disconnect")
         const response = ajax("/exit_game", "GET", {})
-        response.onload = () => window.location.pathname = "/"
+        response.onload = () => {
+            send({}, "/disconnect")
+            window.location.pathname = "/"
+        }
     }
 
     useEffect(() => {
@@ -61,6 +62,7 @@ function Game() {
 function getViewPlayers(players, playerId) {
     let totalPlayers = []
     for (let i = 0; i < players.length; i++) {
+        console.log(players + "\n" + playerId)
         if(players[i] != null)
             totalPlayers.push(<div className={"player connected"}>
                 <div id={"black-circle"}>

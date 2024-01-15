@@ -13,7 +13,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Card: () => (/* binding */ Card),
 /* harmony export */   ClickOnCardDeck: () => (/* binding */ ClickOnCardDeck),
 /* harmony export */   getRelativeDeck: () => (/* binding */ getRelativeDeck),
-/* harmony export */   removeCard: () => (/* binding */ removeCard)
+/* harmony export */   removeCard: () => (/* binding */ removeCard),
+/* harmony export */   setYourMove: () => (/* binding */ setYourMove)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
@@ -78,6 +79,19 @@ function getRelativeDeck(gamePos, position, count) {
     finalPos = finalPos < 0 ? count + finalPos : finalPos;
   }
   return finalPos;
+}
+function setYourMove(state, count) {
+  for (let i = 0; i < count; i++) {
+    const moveColor = document.getElementById("name" + i).style;
+    if (i === getRelativeDeck(state.current, state.position, count)) {
+      moveColor.background = "green";
+      moveColor.color = "white";
+    } else {
+      moveColor.background = "wheat";
+      moveColor.color = "black";
+    }
+  }
+  if (state.current === state.position && !state.clicked) document.querySelectorAll(".click-card").forEach(e => e.classList.add("your-move"));else document.querySelectorAll(".click-card").forEach(e => e.classList.remove("your-move"));
 }
 
 /***/ }),
@@ -165,10 +179,10 @@ function Distribution({
   const createDeck = () => {
     let cards = [];
     let offset = 21;
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 35; i++) {
       cards.push( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
         id: "card" + i,
-        className: "deck",
+        className: "deck click-card",
         image: "shirt",
         top: "50%",
         left: `${offset}%`,
@@ -181,17 +195,15 @@ function Distribution({
     return cards;
   };
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => _subscriptions__WEBPACK_IMPORTED_MODULE_4__.MoveSubscriptions.setSubscriptions(setState, setDisplays, players.length), []);
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => setTurn(events.isTurn()), [state.clickedCard]);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => setTurn(events.isTurn()), [state.clicked]);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    (0,_cardManager__WEBPACK_IMPORTED_MODULE_1__.setYourMove)(state, players.length);
+  }, [state]);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     id: "main"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     id: "top"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
-    onClick: el => {
-      (0,_connection__WEBPACK_IMPORTED_MODULE_3__.send)({}, "close", true, () => {});
-      el.target.disabled = true;
-    }
-  }, "Stop"), displays.upsideCard[1] ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
+  }, displays.upsideCard[1] ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
     id: "upside1",
     image: "shirt",
     top: "55%",
@@ -210,6 +222,7 @@ function Distribution({
     onClick: frame => events.put(frame),
     state: state
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h2", {
+    id: "name1",
     className: "game-name",
     style: {
       left: "57%",
@@ -218,6 +231,7 @@ function Distribution({
   }, players[(pos + 1) % players.length]["name"])), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     id: "center"
   }, players.length === 3 ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h2", {
+    id: "name2",
     className: "game-name",
     style: {
       left: "1%",
@@ -263,11 +277,14 @@ function Distribution({
     }
   }, "\u041F\u0435\u0440\u0435\u0432\u0435\u0440\u043D\u0443\u0442\u044C") : "", displays.upsideCard[0] ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
     id: "upside0",
+    className: "click-card your-move",
     image: "shirt",
     top: "46%",
-    left: "40%"
+    left: "40%",
+    onClick: events.clickOnPlayerDeck
   }) : "", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_cardManager__WEBPACK_IMPORTED_MODULE_1__.Card, {
     id: "0",
+    className: "click-card",
     image: "shirt",
     top: "46%",
     left: "50%",
@@ -275,12 +292,13 @@ function Distribution({
     onClick: () => events.take()
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_events__WEBPACK_IMPORTED_MODULE_2__.Frame, {
     id: "frame0",
-    top: "10vh",
+    top: "46%",
     left: "50%",
     clicked: state.clicked,
     onClick: frame => events.put(frame),
     state: state
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h2", {
+    id: "name0",
     className: "game-name",
     style: {
       left: "57%"
@@ -306,10 +324,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _cardManager__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./cardManager */ "./src/main/resources/static/js/game/cardManager.js");
-/* harmony import */ var _connection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./connection */ "./src/main/resources/static/js/game/connection.js");
-/* harmony import */ var _subscriptions__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./subscriptions */ "./src/main/resources/static/js/game/subscriptions.js");
-
+/* harmony import */ var _connection__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./connection */ "./src/main/resources/static/js/game/connection.js");
+/* harmony import */ var _subscriptions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./subscriptions */ "./src/main/resources/static/js/game/subscriptions.js");
 
 
 
@@ -319,32 +335,30 @@ class Events {
   constructor(state, setState) {
     this.state = state;
     this.setState = setState;
-    _subscriptions__WEBPACK_IMPORTED_MODULE_3__.MoveSubscriptions.state = state;
+    _subscriptions__WEBPACK_IMPORTED_MODULE_2__.MoveSubscriptions.state = state;
   }
   mouseEnterOnCardDeck(el) {
+    const style = el.target.style;
     if (!this.state.clicked && this.state.current === this.state.position) {
-      el.target.style.border = "2px solid blue";
-      el.target.style.top = "26vh";
-      el.target.style.cursor = "pointer";
+      style.top = `${parseInt(style.top) - 2}%`;
     }
   }
   mouseLeaveFromCardDeck(el) {
+    const style = el.target.style;
     if (!this.state.clicked && this.state.current === this.state.position) {
-      el.target.style.border = "1px solid black";
-      el.target.style.top = "27vh";
-      el.target.style.cursor = "default";
+      style.top = `${parseInt(style.top) + 2}%`;
     }
   }
   click(cardId) {
     let id = cardId.target.id;
-    if (!this.state.clicked && this.state.current === this.state.position) (0,_connection__WEBPACK_IMPORTED_MODULE_2__.send)({
+    if (!this.state.clicked && this.state.current === this.state.position) (0,_connection__WEBPACK_IMPORTED_MODULE_1__.send)({
       cardPos: id.substring(4)
     }, "click");
   }
   put(frame) {
     if (this.state.clicked && this.state.current === this.state.position) {
       let id = frame.target.id.substring(5);
-      (0,_connection__WEBPACK_IMPORTED_MODULE_2__.send)({
+      (0,_connection__WEBPACK_IMPORTED_MODULE_1__.send)({
         player: id,
         card: this.state.clickedCard
       }, "put");
@@ -352,14 +366,17 @@ class Events {
   }
   take() {
     if (!this.state.clicked && this.state.current === this.state.position) {
-      (0,_connection__WEBPACK_IMPORTED_MODULE_2__.send)({}, "take");
+      (0,_connection__WEBPACK_IMPORTED_MODULE_1__.send)({}, "take");
     }
   }
   isTurn() {
-    return document.querySelectorAll(".deck").length === 0 && this.state.position === 0 && document.getElementById("upside0") === null && this.state.clickedCard === null;
+    return document.querySelectorAll(".deck").length === 0 && this.state.current === this.state.position && document.getElementById("upside0") === null && this.state.clickedCard === null;
   }
   turn() {
-    (0,_connection__WEBPACK_IMPORTED_MODULE_2__.send)({}, "turn");
+    (0,_connection__WEBPACK_IMPORTED_MODULE_1__.send)({}, "turn");
+  }
+  clickOnPlayerDeck() {
+    (0,_connection__WEBPACK_IMPORTED_MODULE_1__.send)({}, "clickOnPlayerDeck");
   }
 }
 function Frame(props) {
@@ -409,12 +426,13 @@ function Game() {
     weight: 0,
     rating: 0
   });
-  const [gameId, setGameId] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(0);
   const [players, setPlayers] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const leave = () => {
-    (0,_connection__WEBPACK_IMPORTED_MODULE_3__.send)({}, "/disconnect");
     const response = (0,_utils_requests__WEBPACK_IMPORTED_MODULE_2__.ajax)("/exit_game", "GET", {});
-    response.onload = () => window.location.pathname = "/";
+    response.onload = () => {
+      (0,_connection__WEBPACK_IMPORTED_MODULE_3__.send)({}, "/disconnect");
+      window.location.pathname = "/";
+    };
   };
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     const response = (0,_utils_requests__WEBPACK_IMPORTED_MODULE_2__.ajax)("/get_client", "GET", {});
@@ -467,6 +485,7 @@ function Game() {
 function getViewPlayers(players, playerId) {
   let totalPlayers = [];
   for (let i = 0; i < players.length; i++) {
+    console.log(players + "\n" + playerId);
     if (players[i] != null) totalPlayers.push( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
       className: "player connected"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {

@@ -12,15 +12,14 @@ import java.util.List;
 @Table(name = "player_props")
 @Data
 @NoArgsConstructor
-@ToString(exclude = {"player", "game"})
+@ToString(exclude = {"game", "player"})
 public class PlayerProps {
 
     @Id
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "player_id")
-    private Player player;
+    @Column(name = "player_id")
+    private long playerId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "game_id")
     private Game game;
 
@@ -30,11 +29,15 @@ public class PlayerProps {
     @Column(name = "deck_pointer")
     private int deckPointer;
 
-    @OneToMany(mappedBy = "playerProps", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "playerProps", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<PlayerCard> playersDeck = new LinkedList<>();
 
-    public PlayerProps(Player player, Game game) {
-        this.player = player;
+    @OneToOne
+    @JoinColumn(name = "player_id")
+    private Player player;
+
+    public PlayerProps(long playerId, Game game) {
+        this.playerId = playerId;
         this.game = game;
     }
 }
