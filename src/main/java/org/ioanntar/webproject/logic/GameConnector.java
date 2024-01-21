@@ -23,10 +23,10 @@ public class GameConnector {
     public void create(HttpSession session, int count) {
         Game game = database.merge(new Game(count));
         Player player = database.get(Player.class, (long) session.getAttribute("playerId"));
-        database.merge(new PlayerProps(player.getId(), game));
-        database.commit();
+        database.merge(new PlayerProps(player.getId(), game, 0));
 
         session.setAttribute("gameId", game.getId());
+        database.commit();
     }
 
     public Game exit(SimpMessageHeaderAccessor sha) {
@@ -40,7 +40,6 @@ public class GameConnector {
             database.delete(game);
         }
 
-        database.commit();
         return game;
     }
 
@@ -59,6 +58,7 @@ public class GameConnector {
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("players", new JSONArray(playersList)).put("gameId", game.getId());
+        database.commit();
         return jsonObject;
     }
 
@@ -75,7 +75,7 @@ public class GameConnector {
             return jsonObject.toString();
         }
 
-        database.merge(new PlayerProps(player.getId(), game));
+        database.merge(new PlayerProps(player.getId(), game, game.getPlayerProps().size()));
         database.commit();
         session.setAttribute("gameId", gameId);
         jsonObject.put("status", "ok");
@@ -85,13 +85,10 @@ public class GameConnector {
     public Game connectToGame(String data, SimpMessageHeaderAccessor sha) {
         JSONObject jsonObject = new JSONObject(data);
         PlayerProps player = database.get(PlayerProps.class, jsonObject.getLong("playerId"));
-        Game game = player.getGame();
-        player.setPosition(game.getPlayerProps().size() - 1);
-        database.commit();
 
         sha.getSessionAttributes().put("playerId", player.getPlayerId());
         sha.getSessionAttributes().put("gameId", jsonObject.getLong("gameId"));
 
-        return game;
+        return player.getGame();
     }
 }

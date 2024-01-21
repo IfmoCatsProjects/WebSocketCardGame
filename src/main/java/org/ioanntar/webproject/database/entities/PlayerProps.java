@@ -26,8 +26,8 @@ public class PlayerProps {
     @Column(name = "position")
     private int position;
 
-    @Column(name = "deck_pointer")
-    private int deckPointer;
+    @Column(name = "ready")
+    private boolean ready = true;
 
     @OneToMany(mappedBy = "playerProps", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<PlayerCard> playersDeck = new LinkedList<>();
@@ -36,8 +36,9 @@ public class PlayerProps {
     @JoinColumn(name = "player_id")
     private Player player;
 
-    public PlayerProps(long playerId, Game game) {
+    public PlayerProps(long playerId, Game game, int position) {
         this.playerId = playerId;
         this.game = game;
+        this.position = position;
     }
 }

@@ -2,10 +2,11 @@ import React, {useEffect, useState} from "react";
 import {createRoot} from "react-dom/client";
 import { FaUserClock } from "react-icons/fa";
 import {ajax} from "../utils/requests";
-import {send, subscribe, webSocketGameConnect} from "./connection";
+import {disconnect, send, subscribe, webSocketGameConnect} from "./connection";
 import {Distribution} from "./distribution";
+import {Finish} from "./finish";
 
-function Game() {
+export function Game() {
     const [data, setData] = useState({
         playerId: 0,
         gameId: 0,
@@ -17,6 +18,7 @@ function Game() {
     const [players, setPlayers] = useState([])
 
     const leave = () => {
+        // disconnect()
         const response = ajax("/exit_game", "GET", {})
         response.onload = () => {
             send({}, "/disconnect")
@@ -38,6 +40,7 @@ function Game() {
                     data = JSON.parse(data)
                     root.render(<Distribution common={data["common"]} move={data["current"]} pos={data["position"]} players={data["players"]}/>)
                 })
+                subscribe("/players/game/finish", (data) => root.render(<Finish data={JSON.parse(data)} />))
                 send({playerId: text.playerId, gameId: text.gameId, name: text.name}, "connect")
             })
         }
@@ -62,7 +65,6 @@ function Game() {
 function getViewPlayers(players, playerId) {
     let totalPlayers = []
     for (let i = 0; i < players.length; i++) {
-        console.log(players + "\n" + playerId)
         if(players[i] != null)
             totalPlayers.push(<div className={"player connected"}>
                 <div id={"black-circle"}>
@@ -81,5 +83,5 @@ function getViewPlayers(players, playerId) {
     return totalPlayers
 }
 
-const root = createRoot(document.getElementById("root"))
+export const root = createRoot(document.getElementById("root"))
 root.render(<Game />)

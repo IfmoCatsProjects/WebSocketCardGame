@@ -122,7 +122,11 @@ img.hidden {
     border: 2px solid red;
 }
 
-.logic-button:disabled{
+button:hover {
+    cursor: pointer;
+}
+
+button:disabled {
     background: white;
     color: gray;
 }
@@ -130,12 +134,10 @@ img.hidden {
 .leave-button:hover {
     background: red;
     color: white;
-    cursor: pointer;
 }
 
 .start-button:hover:not(:disabled) {
     background: green;
-    cursor: pointer;
 }
 
 #black-circle {
@@ -183,4 +185,76 @@ img.hidden {
 .your-move:hover {
     border: 2px solid blue;
     cursor: pointer;
+}
+
+/*окончание игры*/
+
+#finish-window {
+    position: absolute;
+    transform: translateX(-50%) translateY(-50%);
+    left: 50%;
+    top: 50%;
+    width: 40%;
+    height: 50%;
+    background: white;
+    text-align: center;
+}
+
+#players-stat {
+    width: 95%;
+    margin: -20px auto;
+    border-spacing: 15px;
+}
+
+.player-stat {
+    width: 100%;
+    height: 70px;
+    background: wheat;
+    border-radius: 10px;
+    box-shadow: inset 0 0 10px black;
+    text-align: left;
+    padding-left: 10px;
+    padding-top: 1px;
+    display: flex;
+    grid-gap: 6%;
+}
+
+td {
+    display: flex;
+}
+
+h3 {
+    margin-bottom: 5px;
+}
+
+#rating-text {
+    display: inline-block;
+    border: 1px solid white;
+}
+
+.pig-finish {
+    height: 100%;
+}
+
+#pork-per-year {
+    width: 150px;
+    text-align: center;
+}
+
+.continue {
+    margin-top: 5%;
+    height: 8%;
+    background: linear-gradient(to left, purple 40%, darkblue 75%);
+    color: white;
+    border-radius: 10px;
+}
+
+.continue:hover:not(:disabled) {
+    transform: scale(1.1);
+}
+
+/* Хрюкание */
+
+#pig-lose {
+    height: 60%;
 }

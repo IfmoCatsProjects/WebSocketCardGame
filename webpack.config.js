@@ -15,6 +15,7 @@ module.exports = {
             './src/main/resources/static/js/game/events.js',
             './src/main/resources/static/js/game/connection.js',
             './src/main/resources/static/js/game/game.js',
+            './src/main/resources/static/js/game/finish.js'
         ],
         home: [
             './src/main/resources/static/js/home/home.js',

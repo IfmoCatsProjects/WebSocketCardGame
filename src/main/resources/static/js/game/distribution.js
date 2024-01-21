@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Card, ClickOnCardDeck, setYourMove} from "./cardManager";
 import Events, {Frame} from "./events";
-import {send} from "./connection";
 import {MoveSubscriptions} from "./subscriptions";
 
 export function Distribution({common, move, pos, players}) {
@@ -21,7 +20,7 @@ export function Distribution({common, move, pos, players}) {
     const createDeck = () => {
         let cards = []
         let offset = 21
-        for (let i = 0; i < 35; i++) {
+        for (let i = 0; i < 2; i++) {
             cards.push(<Card id={"card" + i} className={"deck click-card"} image={"shirt"} top={"50%"} left={`${offset}%`}
              onClick={(el) => events.click(el)}
              onMouseEnter={(el) => events.mouseEnterOnCardDeck(el)}

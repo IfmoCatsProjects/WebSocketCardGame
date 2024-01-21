@@ -84,7 +84,6 @@ function JoinGame() {
     });
     response.onload = () => {
       const text = JSON.parse(response.responseText);
-      console.log(text);
       if (text.status === "ok") window.location.pathname = "/";
       setError(text.status);
     };

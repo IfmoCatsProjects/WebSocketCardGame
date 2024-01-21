@@ -66,4 +66,21 @@ public class GameController {
     public void clickOnPlayerDeck(SimpMessageHeaderAccessor sha) {
         new GameManager(sha, template).clickOnPlayerDeck();
     }
+
+    //Конец игры
+
+    @MessageMapping("/clickOnPig")
+    public void clickOnPig(SimpMessageHeaderAccessor sha) {
+        new GameManager(sha, template).clickOnPig();
+    }
+
+    @MessageMapping("/checkReadyPlayers")
+    public void punishEnough(SimpMessageHeaderAccessor sha) {
+        new GameManager(sha, template).checkReadyPlayers();
+    }
+
+    @MessageMapping("/continue")
+    public void reload(SimpMessageHeaderAccessor sha) {
+        new GameManager(sha, template).reload();
+    }
 }

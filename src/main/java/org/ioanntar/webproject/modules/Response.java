@@ -9,6 +9,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+
 @ToString
 public class Response {
 
@@ -25,12 +29,33 @@ public class Response {
             template.convertAndSendToUser(String.valueOf(player.getPlayerId()), "/game/" + destination, response.toString());
     }
 
+    private void sendWithPosition(String destination, JSONObject response, List<PlayerProps> playerPropsList) {
+        for (PlayerProps player: playerPropsList) {
+            response.put("position", player.getPosition());
+            template.convertAndSendToUser(String.valueOf(player.getPlayerId()), "/game/" + destination, response.toString());
+        }
+    }
+
     public void sendStart(String card) {
         JSONArray players = new GameConnector().bind(game).getJSONArray("players");
         JSONObject response = new JSONObject().put("common", card).put("current", game.getCurrent()).put("players", players);
-        for (PlayerProps player: game.getPlayerProps()) {
-            response.put("position", player.getPosition());
-            template.convertAndSendToUser(String.valueOf(player.getPlayerId()), "/game/start", response.toString());
+        sendWithPosition("start", response, game.getPlayerProps());
+    }
+
+    public void sendToFinish(JSONArray ratings) {
+        List<JSONObject> playersList = new LinkedList<>();
+        List<PlayerProps> playerPropsList = game.getPlayerProps().stream().sorted(Comparator.comparing(e -> e.getPlayersDeck().size())).toList();
+
+        for (PlayerProps player: playerPropsList) {
+            JSONObject jsonObject = new HttpRequest().getClientData(player.getPlayerId());
+
+            JSONObject rating = ratings.getJSONObject(playerPropsList.indexOf(player));
+            for (String key: rating.keySet())
+                jsonObject.put(key, rating.get(key));
+
+            playersList.add(jsonObject);
         }
+        JSONObject response = new JSONObject().put("players", new JSONArray(playersList));
+        sendWithPosition("finish", response, playerPropsList);
     }
 }

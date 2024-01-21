@@ -3,6 +3,7 @@ package org.ioanntar.webproject.logic;
 import org.ioanntar.webproject.database.entities.*;
 import org.ioanntar.webproject.database.utils.Database;
 import org.ioanntar.webproject.modules.Response;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -15,7 +16,7 @@ import java.util.List;
 public class GameManager {
     private final SimpMessageHeaderAccessor sha;
     private final SimpMessagingTemplate template;
-    private Database database = new Database();
+    private final Database database = new Database();
 
     public GameManager(SimpMessageHeaderAccessor sha, SimpMessagingTemplate template) {
         this.sha = sha;
@@ -34,8 +35,8 @@ public class GameManager {
         game.getGameDecks().addAll(gameDeck);
         game.getGameDecks().add(card);
 
-        database.commit();
         new Response(game, template).sendStart(card.getCard());
+        database.commit();
     }
 
     public void click(int cardPosition) {
@@ -54,31 +55,25 @@ public class GameManager {
         long id = (long) sha.getSessionAttributes().get("gameId");
         Game game = database.get(Game.class, id);
         int put;
-        long a;
 
         if (playerPut == 3) {
             put = playerPut;
             int commonSize = game.getGameDecks().stream().filter(g -> g.getType() == DeckType.COMMON).toList().size();
-            a = commonSize;
             game.getGameDecks().add(new GameCard(game, DeckType.COMMON, card, commonSize));
         } else {
             put = (game.getCurrent() + playerPut) % game.getCount();
             PlayerProps player = game.getPlayerProps().stream().filter(p -> p.getPosition() == put).findFirst().get();
 
             long openedPosition = player.getPlayersDeck().stream().filter(p -> p.getType() == DeckType.OPENED).count();
-            a = openedPosition;
             player.getPlayersDeck().add(new PlayerCard(player, card, DeckType.OPENED, (int) openedPosition));
         }
+
+        if (playerPut != 0 & isPlayerWins(game)) return;
         new Response(game, template).sendToPlayers("put", new JSONObject().put("gamePos", put));
 
         if (playerPut == 0)
             game.setCurrent((game.getCurrent() + 1) % (game.getCount()));
-
-        try {
-            database.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        database.commit();
     }
 
     public void take() {
@@ -116,5 +111,65 @@ public class GameManager {
         database.commit();
 
         new Response(player.getGame(), template).sendToPlayers("clickOnPlayerDeck", jsonObject);
+    }
+
+    private JSONArray changeRating(Game game) {
+        List<PlayerProps> playerPropsList = game.getPlayerProps().stream()
+                .sorted(Comparator.comparing(e -> e.getPlayersDeck().size())).toList();
+
+        List<JSONObject> objects = new LinkedList<>();
+        for (PlayerProps player: playerPropsList) {
+            JSONObject jsonObject = new JSONObject().put("position", player.getPosition());
+
+            if (playerPropsList.indexOf(player) == playerPropsList.size() - 1)
+                player.getPlayer().setRating(player.getPlayer().getRating() > 10 ? player.getPlayer().getRating() - 10 : 0);
+            else
+                player.getPlayer().setRating(player.getPlayer().getRating() + 16 - 16 * playerPropsList.indexOf(player));
+
+            jsonObject.put("currentRating", player.getPlayer().getRating());
+            objects.add(jsonObject);
+        }
+        return new JSONArray(objects);
+    }
+
+    private boolean isPlayerWins(Game game) {
+        long playerId = (long) sha.getSessionAttributes().get("playerId");
+        PlayerProps player = game.getPlayerProps().stream().filter(p -> p.getPlayerId() == playerId).findFirst().get();
+        if (player.getPlayersDeck().size() == 0 & game.getGameDecks().stream().noneMatch(c -> c.getType() == DeckType.DISTRIBUTION)) {
+            new Response(game, template).sendToFinish(changeRating(game));
+
+            game.getGameDecks().clear();
+            game.getPlayerProps().forEach(e -> e.getPlayersDeck().clear());
+            game.getPlayerProps().forEach(e -> e.setReady(false));
+            database.commit();
+            return true;
+        }
+        return false;
+    }
+
+    public void clickOnPig() {
+        long id = (long) sha.getSessionAttributes().get("playerId");
+        PlayerProps player = database.get(PlayerProps.class, id);
+        new Response(player.getGame(), template).sendToPlayers("pigSound", new JSONObject().put("position", player.getPosition()));
+        database.commit();
+    }
+
+    public void checkReadyPlayers() {
+        long id = (long) sha.getSessionAttributes().get("playerId");
+        PlayerProps player = database.get(PlayerProps.class, id);
+        player.setReady(true);
+
+        if (player.getGame().getPlayerProps().stream().allMatch(PlayerProps::isReady))
+            new Response(player.getGame(), template).sendToPlayers("punishEnough", new JSONObject());
+        database.commit();
+    }
+
+    public void reload() {
+        long id = (long) sha.getSessionAttributes().get("gameId");
+        Game game = database.get(Game.class, id);
+
+        if (game.getPlayerProps().stream().allMatch(PlayerProps::isReady))
+            new Response(game, template).sendToPlayers("reload", new JSONObject());
+        database.commit();
     }
 }
