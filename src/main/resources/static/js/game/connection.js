@@ -3,7 +3,7 @@ import Stomp from "stompjs"
 
 const socket = SockJS("/pig")
 const stompClient = Stomp.over(socket)
-// stompClient.debug = null
+stompClient.debug = null
 
 export function webSocketGameConnect(playerId, callback) {
     if (!stompClient.connected)

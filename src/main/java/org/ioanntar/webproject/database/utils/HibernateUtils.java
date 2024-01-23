@@ -3,6 +3,7 @@ package org.ioanntar.webproject.database.utils;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.stat.Statistics;
 import org.ioanntar.webproject.database.entities.*;
 
 import java.util.LinkedList;
@@ -20,6 +21,9 @@ public final class HibernateUtils {
                     configuration.addAnnotatedClass(eClass);
                 StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
                 sessionFactory = configuration.buildSessionFactory(builder.build());
+
+            Statistics stats = sessionFactory.getStatistics();
+            stats.setStatisticsEnabled(true);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

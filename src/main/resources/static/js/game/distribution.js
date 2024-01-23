@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Card, ClickOnCardDeck, setYourMove} from "./cardManager";
 import Events, {Frame} from "./events";
 import {MoveSubscriptions} from "./subscriptions";
+import {send} from "./connection";
 
 export function Distribution({common, move, pos, players}) {
     const [state, setState] = useState({
@@ -20,7 +21,7 @@ export function Distribution({common, move, pos, players}) {
     const createDeck = () => {
         let cards = []
         let offset = 21
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 3; i++) {
             cards.push(<Card id={"card" + i} className={"deck click-card"} image={"shirt"} top={"50%"} left={`${offset}%`}
              onClick={(el) => events.click(el)}
              onMouseEnter={(el) => events.mouseEnterOnCardDeck(el)}
@@ -60,7 +61,7 @@ export function Distribution({common, move, pos, players}) {
             <div id={"bottom"}>
                 {turn ? <button id={"flip-over"} onClick={() => {events.turn(); setTurn(false)}}>Перевернуть</button> : ""}
                 {displays.upsideCard[0] ? <Card id={"upside0"} className={"click-card your-move"} image={"shirt"} top={"46%"} left={"40%"}
-                                                onClick={events.clickOnPlayerDeck}/>: ""}
+                                                onClick={() => events.clickOnPlayerDeck()}/>: ""}
 
                 <Card id={"0"} className={"click-card"} image={"shirt"} top={"46%"} left={"50%"} display={"none"} onClick={() => events.take()}/>
                 <Frame id={"frame0"} top={"46%"} left={"50%"} clicked={state.clicked} onClick={(frame) => events.put(frame)} state={state}/>

@@ -24,6 +24,7 @@ public class GameManager {
     }
 
     public void start() {
+
         long id = (long) sha.getSessionAttributes().get("gameId");
         Game game = database.get(Game.class, id);
 
@@ -40,6 +41,7 @@ public class GameManager {
     }
 
     public void click(int cardPosition) {
+
         long id = (long) sha.getSessionAttributes().get("gameId");
         Game game = database.get(Game.class, id);
         GameCard card = game.getGameDecks().stream().filter(c -> c.getType() == DeckType.DISTRIBUTION && c.getPosition() == cardPosition)
@@ -52,6 +54,7 @@ public class GameManager {
     }
 
     public void put(int playerPut, String card) {
+
         long id = (long) sha.getSessionAttributes().get("gameId");
         Game game = database.get(Game.class, id);
         int put;
@@ -77,6 +80,7 @@ public class GameManager {
     }
 
     public void take() {
+
         long id = (long) sha.getSessionAttributes().get("playerId");
         PlayerProps player = database.get(PlayerProps.class, id);
 
@@ -86,20 +90,22 @@ public class GameManager {
         player.getPlayersDeck().remove(card);
         String subCard = deck.size() != 1 ? deck.get(deck.size() - 2).getCard() : "none";
 
-        database.commit();
         new Response(player.getGame(), template).sendToPlayers("take", new JSONObject().put("card", card.getCard()).put("subCard", subCard));
+        database.commit();
     }
 
     public void turn() {
+
         long id = (long) sha.getSessionAttributes().get("playerId");
         PlayerProps player = database.get(PlayerProps.class, id);
         player.getPlayersDeck().forEach(p -> p.setType(DeckType.CLOSED));
-        database.commit();
 
         new Response(player.getGame(), template).sendToPlayers("turn", new JSONObject());
+        database.commit();
     }
 
     public void clickOnPlayerDeck() {
+
         long id = (long) sha.getSessionAttributes().get("playerId");
         PlayerProps player = database.get(PlayerProps.class, id);
 
@@ -108,12 +114,13 @@ public class GameManager {
         player.getPlayersDeck().remove(card);
 
         JSONObject jsonObject = new JSONObject().put("card", card.getCard()).put("last", closeCards.size() - 1 == 0);
-        database.commit();
 
         new Response(player.getGame(), template).sendToPlayers("clickOnPlayerDeck", jsonObject);
+        database.commit();
     }
 
     private JSONArray changeRating(Game game) {
+
         List<PlayerProps> playerPropsList = game.getPlayerProps().stream()
                 .sorted(Comparator.comparing(e -> e.getPlayersDeck().size())).toList();
 
@@ -136,18 +143,20 @@ public class GameManager {
         long playerId = (long) sha.getSessionAttributes().get("playerId");
         PlayerProps player = game.getPlayerProps().stream().filter(p -> p.getPlayerId() == playerId).findFirst().get();
         if (player.getPlayersDeck().size() == 0 & game.getGameDecks().stream().noneMatch(c -> c.getType() == DeckType.DISTRIBUTION)) {
-            new Response(game, template).sendToFinish(changeRating(game));
+            JSONArray playerStat = changeRating(game);
 
             game.getGameDecks().clear();
             game.getPlayerProps().forEach(e -> e.getPlayersDeck().clear());
             game.getPlayerProps().forEach(e -> e.setReady(false));
-            database.commit();
+
+            new Response(game, template).sendToFinish(playerStat);
             return true;
         }
         return false;
     }
 
     public void clickOnPig() {
+
         long id = (long) sha.getSessionAttributes().get("playerId");
         PlayerProps player = database.get(PlayerProps.class, id);
         new Response(player.getGame(), template).sendToPlayers("pigSound", new JSONObject().put("position", player.getPosition()));
@@ -155,6 +164,7 @@ public class GameManager {
     }
 
     public void checkReadyPlayers() {
+
         long id = (long) sha.getSessionAttributes().get("playerId");
         PlayerProps player = database.get(PlayerProps.class, id);
         player.setReady(true);
@@ -165,6 +175,7 @@ public class GameManager {
     }
 
     public void reload() {
+
         long id = (long) sha.getSessionAttributes().get("gameId");
         Game game = database.get(Game.class, id);
 

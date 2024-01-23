@@ -8,6 +8,7 @@ export function Finish({data}) {
     const index = data.players.findIndex(i => i.position === data.position)
 
     const [lose, setLose] = useState(index !== 0)
+    useEffect(() => console.log(data))
     if (lose)
         return (<div>
             <div id={"blur"}></div>

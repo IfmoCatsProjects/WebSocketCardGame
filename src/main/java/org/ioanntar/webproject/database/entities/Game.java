@@ -24,10 +24,10 @@ public class Game {
     @Column(name = "current")
     private int current;
 
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GameCard> gameDecks = new LinkedList<>();
 
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private List<PlayerProps> playerProps = new LinkedList<>();
 
     public Game() {}

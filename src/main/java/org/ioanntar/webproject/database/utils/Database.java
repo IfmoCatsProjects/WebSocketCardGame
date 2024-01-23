@@ -1,8 +1,10 @@
 package org.ioanntar.webproject.database.utils;
 
 import jakarta.persistence.criteria.Root;
+import jakarta.transaction.Transactional;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -12,14 +14,22 @@ public class Database {
     private Transaction transaction;
 
     public Database() {
-        session = HibernateUtils.getSessionFactory().openSession();
-        transaction = session.beginTransaction();
+        openTransaction();
+    }
+
+    public void openTransaction() {
+        session = HibernateUtils.getSessionFactory().getCurrentSession();
+        transaction = session.getTransaction();
+        if (!transaction.isActive()) {
+            session.beginTransaction();
+        }
     }
 
     public <T> T get(Class<?> entityClass, long id) {
         return (T) session.get(entityClass, id);
     }
 
+    @Transactional
     public <T> T merge(T entity) {
         return session.merge(entity);
     }
@@ -31,8 +41,9 @@ public class Database {
     }
 
     public void commit() {
-        transaction.commit();
-        session.close();
+        try {
+            transaction.commit();
+        } catch (IllegalStateException ignored) {} // На случай, если поставлю коммит в ненужном месте
     }
 
     public <T> void delete(T entity) {

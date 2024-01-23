@@ -21,6 +21,8 @@ public class GameConnector {
     private final Database database = new Database();
 
     public void create(HttpSession session, int count) {
+        database.openTransaction();
+
         Game game = database.merge(new Game(count));
         Player player = database.get(Player.class, (long) session.getAttribute("playerId"));
         database.merge(new PlayerProps(player.getId(), game, 0));
@@ -30,6 +32,8 @@ public class GameConnector {
     }
 
     public Game exit(SimpMessageHeaderAccessor sha) {
+        database.openTransaction();
+
         long playerId = (long) sha.getSessionAttributes().get("playerId");
         Game game = database.get(Game.class, (long) sha.getSessionAttributes().get("gameId"));
         Player player = database.get(Player.class, playerId);
@@ -40,10 +44,13 @@ public class GameConnector {
             database.delete(game);
         }
 
+        database.commit();
         return game;
     }
 
     public JSONObject bind(Game game) {
+        database.openTransaction();
+
         List<JSONObject> playersList = new LinkedList<>();
         List<PlayerProps> playerPropsList = game.getPlayerProps();
         playerPropsList.sort(Comparator.comparing(PlayerProps::getPosition));
@@ -63,6 +70,8 @@ public class GameConnector {
     }
 
     public String join(HttpSession session, long gameId) {
+        database.openTransaction();
+
         Player player = database.get(Player.class, (long) session.getAttribute("playerId"));
         Game game = database.get(Game.class, gameId);
 
@@ -83,6 +92,8 @@ public class GameConnector {
     }
 
     public Game connectToGame(String data, SimpMessageHeaderAccessor sha) {
+        database.openTransaction();
+
         JSONObject jsonObject = new JSONObject(data);
         PlayerProps player = database.get(PlayerProps.class, jsonObject.getLong("playerId"));
 

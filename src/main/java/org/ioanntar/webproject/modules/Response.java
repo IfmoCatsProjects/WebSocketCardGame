@@ -4,6 +4,7 @@ import lombok.ToString;
 import org.ioanntar.webproject.database.entities.Game;
 import org.ioanntar.webproject.database.entities.Player;
 import org.ioanntar.webproject.database.entities.PlayerProps;
+import org.ioanntar.webproject.database.utils.Database;
 import org.ioanntar.webproject.logic.GameConnector;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -56,6 +57,7 @@ public class Response {
             playersList.add(jsonObject);
         }
         JSONObject response = new JSONObject().put("players", new JSONArray(playersList));
+        System.out.println(playerPropsList);
         sendWithPosition("finish", response, playerPropsList);
     }
 }

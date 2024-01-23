@@ -14,16 +14,14 @@ class Events {
 
     mouseEnterOnCardDeck(el) {
         const style = el.target.style
-        if (!this.state.clicked && this.state.current === this.state.position) {
+        if (!this.state.clicked && this.state.current === this.state.position)
             style.top = `${parseInt(style.top) - 2}%`
-        }
     }
 
     mouseLeaveFromCardDeck(el) {
         const style = el.target.style
-        if (!this.state.clicked && this.state.current === this.state.position) {
+        if (!this.state.clicked && this.state.current === this.state.position)
             style.top = `${parseInt(style.top) + 2}%`
-        }
     }
 
     click(cardId) {
@@ -40,9 +38,8 @@ class Events {
     }
 
     take() {
-        if (!this.state.clicked && this.state.current === this.state.position) {
+        if (!this.state.clicked && this.state.current === this.state.position)
             send({}, "take")
-        }
     }
 
     isTurn() {
@@ -55,7 +52,8 @@ class Events {
     }
 
     clickOnPlayerDeck() {
-        send({}, "clickOnPlayerDeck")
+        if (!this.state.clicked && this.state.current === this.state.position)
+            send({}, "clickOnPlayerDeck")
     }
 }
 
