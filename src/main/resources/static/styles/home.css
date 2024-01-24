@@ -191,6 +191,11 @@ header {
     padding-top: 2%;
 }
 
+#your-row {
+    color: black;
+    background-color: green;
+}
+
 .rating-table tr:nth-child(odd) {
     background-color: #323C50;
 }

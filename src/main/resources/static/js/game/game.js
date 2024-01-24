@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {createRoot} from "react-dom/client";
 import { FaUserClock } from "react-icons/fa";
 import {ajax} from "../utils/requests";
-import {disconnect, send, subscribe, webSocketGameConnect} from "./connection";
+import {disconnect, send, subscribe, webSocketConnect} from "./connection";
 import {Distribution} from "./distribution";
 import {Finish} from "./finish";
 
@@ -31,7 +31,7 @@ export function Game() {
         response.onload = () => {
             const text = JSON.parse(response.responseText)
             setData(text)
-            webSocketGameConnect(text.playerId, () => {
+            webSocketConnect(text.playerId, () => {
                 subscribe("/players/game/connectedPlayers", (resp) => {
                     const players = JSON.parse(resp)
                     setPlayers(players["players"])

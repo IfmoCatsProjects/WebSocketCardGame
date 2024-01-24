@@ -6,58 +6,56 @@ import org.ioanntar.webproject.database.entities.Game;
 import org.ioanntar.webproject.database.entities.Player;
 import org.ioanntar.webproject.database.entities.PlayerProps;
 import org.ioanntar.webproject.database.utils.Database;
+import org.ioanntar.webproject.database.utils.DatabaseProvider;
+import org.ioanntar.webproject.modules.Response;
+import org.ioanntar.webproject.utils.JSONUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class GameConnector {
 
-    private final Database database = new Database();
-
     public void create(HttpSession session, int count) {
-        database.openTransaction();
+        Database database = new Database();
 
         Game game = database.merge(new Game(count));
         Player player = database.get(Player.class, (long) session.getAttribute("playerId"));
-        database.merge(new PlayerProps(player.getId(), game, 0));
+        game.getPlayerProps().add(new PlayerProps(player.getPlayerId(), game, 0));
 
-        session.setAttribute("gameId", game.getId());
         database.commit();
+        session.setAttribute("gameId", game.getId());
     }
 
     public Game exit(SimpMessageHeaderAccessor sha) {
-        database.openTransaction();
-
         long playerId = (long) sha.getSessionAttributes().get("playerId");
+        Database database = new Database();
         Game game = database.get(Game.class, (long) sha.getSessionAttributes().get("gameId"));
-        Player player = database.get(Player.class, playerId);
 
+        Player player = database.get(Player.class, playerId);
         game.getPlayerProps().remove(player.getPlayerProps());
-        database.delete(player.getPlayerProps());
+
         if (game.getPlayerProps().size() == 0) {
             database.delete(game);
         }
 
+        Game gameObject = game.fetchObjectFromProxy();
         database.commit();
-        return game;
+        return gameObject;
     }
 
     public JSONObject bind(Game game) {
-        database.openTransaction();
-
         List<JSONObject> playersList = new LinkedList<>();
         List<PlayerProps> playerPropsList = game.getPlayerProps();
         playerPropsList.sort(Comparator.comparing(PlayerProps::getPosition));
 
         for (PlayerProps playerProps: playerPropsList) {
-            JSONObject jsonPlayers = new JSONObject();
-            jsonPlayers.put("name", playerProps.getPlayer().getName()).put("playerId", playerProps.getPlayerId());
+            JSONObject jsonPlayers = JSONUtils.getClient(playerProps.getPlayer(), "name", "playerId");
             playersList.add(jsonPlayers);
         }
         for(int i = 0; i < game.getCount() - playerPropsList.size(); i++)
@@ -65,12 +63,12 @@ public class GameConnector {
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("players", new JSONArray(playersList)).put("gameId", game.getId());
-        database.commit();
+
         return jsonObject;
     }
 
     public String join(HttpSession session, long gameId) {
-        database.openTransaction();
+        Database database = new Database();
 
         Player player = database.get(Player.class, (long) session.getAttribute("playerId"));
         Game game = database.get(Game.class, gameId);
@@ -84,22 +82,24 @@ public class GameConnector {
             return jsonObject.toString();
         }
 
-        database.merge(new PlayerProps(player.getId(), game, game.getPlayerProps().size()));
-        database.commit();
+        game.getPlayerProps().add(new PlayerProps(player.getPlayerId(), game, game.getPlayerProps().size()));
         session.setAttribute("gameId", gameId);
         jsonObject.put("status", "ok");
+
+        database.commit();
         return jsonObject.toString();
     }
 
-    public Game connectToGame(String data, SimpMessageHeaderAccessor sha) {
-        database.openTransaction();
-
+    public Game connectToGame(String data, SimpMessageHeaderAccessor sha, SimpMessagingTemplate template) {
         JSONObject jsonObject = new JSONObject(data);
+        Database database = new Database();
         PlayerProps player = database.get(PlayerProps.class, jsonObject.getLong("playerId"));
 
         sha.getSessionAttributes().put("playerId", player.getPlayerId());
         sha.getSessionAttributes().put("gameId", jsonObject.getLong("gameId"));
 
-        return player.getGame();
+        Game game = player.getGame().fetchObjectFromProxy();
+        database.commit();
+        return game;
     }
 }

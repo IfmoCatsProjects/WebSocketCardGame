@@ -17,7 +17,7 @@ export function Header({data, setData}) {
         const response = ajax("/get_client", "GET", {})
         response.onload = () => {
             let text = JSON.parse(response.responseText)
-            setData({name: text.name, email: text.email, rating: text.rating, weight: text.weight})
+            setData(text)
         }
 
         document.body.addEventListener("click", (e) => {

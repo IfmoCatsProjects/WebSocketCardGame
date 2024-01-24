@@ -10,7 +10,7 @@ import lombok.ToString;
 @ToString(exclude = "playerProps")
 public class PlayerCard {
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id")
     private PlayerProps playerProps;
 

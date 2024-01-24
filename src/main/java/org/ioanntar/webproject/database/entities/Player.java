@@ -2,10 +2,10 @@ package org.ioanntar.webproject.database.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+
+import java.sql.Timestamp;
 
 @Data
-@EqualsAndHashCode(of = "id")
 @Entity
 @Table(name = "players")
 public class Player {
@@ -13,7 +13,7 @@ public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private long playerId;
 
     @Column(name = "name")
     private String name;
@@ -29,6 +29,9 @@ public class Player {
 
     @Column(name = "rating")
     private int rating;
+
+    @Column(name = "last_game")
+    private Timestamp lastGame;
 
     @OneToOne
     @JoinColumn(name = "id")

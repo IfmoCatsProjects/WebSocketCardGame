@@ -5,7 +5,7 @@ const socket = SockJS("/pig")
 const stompClient = Stomp.over(socket)
 stompClient.debug = null
 
-export function webSocketGameConnect(playerId, callback) {
+export function webSocketConnect(playerId, callback) {
     if (!stompClient.connected)
         stompClient.connect({id: playerId}, callback)
 }

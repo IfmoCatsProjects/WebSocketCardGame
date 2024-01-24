@@ -3,17 +3,14 @@ import {createRoot} from "react-dom/client";
 import {Header} from "./header";
 import {Table} from "./table";
 import {GameRoom} from "./gameRoom";
+import {send} from "../game/connection";
 
 export const GameTypeContext = createContext(null)
 
 function Home() {
-    const [data, setData] = useState({
-        name: "",
-        email: "",
-        weight: 0,
-        rating: 0
-    })
+    const [data, setData] = useState({playerId: 0})
     const [gameType, setGameType] = useState("none")
+    const [isTop, setTop] = useState(true)
 
     return (<div id={"main"}>
             <Header data={data} setData={setData}/>
@@ -24,12 +21,13 @@ function Home() {
                     <div id={"menu-buttons"}>
                         <button className={"menu-button create-game"} onClick={() => setGameType("create")}>Создать игру</button>
                         <button className={"menu-button join-game"} onClick={() => setGameType("join")}>Присоединиться</button>
-                        <button className={"menu-button my-rating"}>Мой рейтинг</button>
+                        <button className={"menu-button my-rating"} onClick={() => setTop(!isTop)}>
+                            {isTop ? "Мой рейтинг" : "Топ-рейтинг"}</button>
                     </div>
                 </div>
             </div>
             <div id={"table"}>
-                <Table />
+                {data.playerId !== 0 ? <Table playerId={data.playerId} show={isTop ? "top" : "my"}/> : ""}
             </div>
         </div>
         {gameType !== "none" ?

@@ -19,7 +19,7 @@ public class PlayerProps {
     @Column(name = "player_id")
     private long playerId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id")
     private Game game;
 
@@ -32,7 +32,7 @@ public class PlayerProps {
     @OneToMany(mappedBy = "playerProps", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<PlayerCard> playersDeck = new LinkedList<>();
 
-    @OneToOne
+    @OneToOne()
     @JoinColumn(name = "player_id")
     private Player player;
 

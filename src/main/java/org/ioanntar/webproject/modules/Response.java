@@ -2,10 +2,9 @@ package org.ioanntar.webproject.modules;
 
 import lombok.ToString;
 import org.ioanntar.webproject.database.entities.Game;
-import org.ioanntar.webproject.database.entities.Player;
 import org.ioanntar.webproject.database.entities.PlayerProps;
-import org.ioanntar.webproject.database.utils.Database;
 import org.ioanntar.webproject.logic.GameConnector;
+import org.ioanntar.webproject.utils.JSONUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -48,7 +47,7 @@ public class Response {
         List<PlayerProps> playerPropsList = game.getPlayerProps().stream().sorted(Comparator.comparing(e -> e.getPlayersDeck().size())).toList();
 
         for (PlayerProps player: playerPropsList) {
-            JSONObject jsonObject = new HttpRequest().getClientData(player.getPlayerId());
+            JSONObject jsonObject = JSONUtils.getClient(player.getPlayer(), "name", "rating", "weight");
 
             JSONObject rating = ratings.getJSONObject(playerPropsList.indexOf(player));
             for (String key: rating.keySet())
@@ -57,7 +56,6 @@ public class Response {
             playersList.add(jsonObject);
         }
         JSONObject response = new JSONObject().put("players", new JSONArray(playersList));
-        System.out.println(playerPropsList);
         sendWithPosition("finish", response, playerPropsList);
     }
 }

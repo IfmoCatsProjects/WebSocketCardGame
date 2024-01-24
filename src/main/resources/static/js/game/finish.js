@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from "react";
 import { GiPodiumWinner } from "react-icons/gi";
-import {disconnect, send, subscribe} from "./connection";
-import {Game, root} from "./game";
+import {send, subscribe} from "./connection";
 
 export function Finish({data}) {
     const yourData = data.players.filter(i => i.position === data.position)[0]
     const index = data.players.findIndex(i => i.position === data.position)
 
     const [lose, setLose] = useState(index !== 0)
-    useEffect(() => console.log(data))
+
+    useEffect(() => send({}, "ratingIsChangedInform"))
     if (lose)
         return (<div>
             <div id={"blur"}></div>
@@ -22,7 +22,7 @@ export function Finish({data}) {
 
 function getPlayersView(players) {
     function getDifference(player) {
-        const difference = player["currentRating"] - player["rating"]
+        const difference = player.rating - player.lastRating
 
         if (difference > 0)
             return <span style={{color: "green"}}> +{difference}</span>
@@ -38,7 +38,7 @@ function getPlayersView(players) {
                 <div className={"player-stat"}>
                     <div>
                         <h3>{i + 1}. {players[i].name}</h3>
-                        <div id={"rating-text"}>Рейтинг: {players[i].currentRating} {getDifference(players[i])}</div>
+                        <div id={"rating-text"}>Рейтинг: {players[i].rating} {getDifference(players[i])}</div>
                     </div>
                     {i > 0 ? <div>
                         <img id={"pig" + players[i].position} className={"pig-finish"} src={"../images/pig_finish.png"}/>

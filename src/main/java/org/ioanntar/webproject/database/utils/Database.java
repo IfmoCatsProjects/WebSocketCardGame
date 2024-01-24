@@ -11,25 +11,19 @@ import java.util.List;
 public class Database {
 
     private Session session;
-    private Transaction transaction;
+    private final Transaction transaction;
 
     public Database() {
-        openTransaction();
-    }
-
-    public void openTransaction() {
         session = HibernateUtils.getSessionFactory().getCurrentSession();
         transaction = session.getTransaction();
-        if (!transaction.isActive()) {
-            session.beginTransaction();
-        }
+        if (!transaction.isActive())
+            transaction.begin();
     }
 
     public <T> T get(Class<?> entityClass, long id) {
         return (T) session.get(entityClass, id);
     }
 
-    @Transactional
     public <T> T merge(T entity) {
         return session.merge(entity);
     }
@@ -43,7 +37,9 @@ public class Database {
     public void commit() {
         try {
             transaction.commit();
-        } catch (IllegalStateException ignored) {} // На случай, если поставлю коммит в ненужном месте
+        } catch(Exception re) {
+            transaction.rollback();
+        }
     }
 
     public <T> void delete(T entity) {
